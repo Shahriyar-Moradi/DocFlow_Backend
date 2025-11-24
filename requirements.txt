@@ -1,0 +1,21 @@
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+python-multipart==0.0.6
+pydantic==2.5.0
+python-dotenv==1.0.0
+
+# Google Cloud Services
+google-cloud-storage==2.14.0
+google-cloud-firestore==2.13.1
+google-auth==2.25.2
+
+# Anthropic API
+anthropic==0.7.8
+
+# Image Processing
+Pillow==10.1.0
+PyMuPDF==1.23.8
+
+# Utilities
+python-dateutil==2.8.2
+

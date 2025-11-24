@@ -1,0 +1,793 @@
+/opt/miniconda3/envs/llm10/lib/python3.10/site-packages/google/api_core/_python_version_support.py:266: FutureWarning: You are using a Python version (3.10.19) which Google will stop supporting in new releases of google.api_core once it reaches its end of life (2026-10-04). Please upgrade to the latest Python version, or at least Python 3.11, to continue receiving updates for google.api_core past that date.
+  warnings.warn(message, FutureWarning)
+INFO:     Started server process [62520]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8080 (Press CTRL+C to quit)
+INFO:     127.0.0.1:62935 - "GET /health HTTP/1.1" 200 OK
+2025-11-23 19:11:03,434 - gcs_service - INFO - GCS client initialized with Application Default Credentials for bucket: voucher-bucket-1
+2025-11-23 19:11:04,393 - gcs_service - INFO - Uploaded file to GCS: temp/5a1fc910-8075-4dbd-b650-0131a8a42c4b/test_upload.png (287 bytes)
+2025-11-23 19:11:04,730 - services.firestore_service - INFO - Firestore client initialized for project: rocasoft
+2025-11-23 19:11:05,750 - services.firestore_service - ERROR - Failed to create document record: 403 Cloud Firestore API has not been used in project rocasoft before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=rocasoft then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry. [reason: "SERVICE_DISABLED"
+domain: "googleapis.com"
+metadata {
+  key: "service"
+  value: "firestore.googleapis.com"
+}
+metadata {
+  key: "serviceTitle"
+  value: "Cloud Firestore API"
+}
+metadata {
+  key: "containerInfo"
+  value: "rocasoft"
+}
+metadata {
+  key: "consumer"
+  value: "projects/rocasoft"
+}
+metadata {
+  key: "activationUrl"
+  value: "https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=rocasoft"
+}
+, locale: "en-US"
+message: "Cloud Firestore API has not been used in project rocasoft before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=rocasoft then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry."
+, links {
+  description: "Google developers console API activation"
+  url: "https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=rocasoft"
+}
+]
+2025-11-23 19:11:05,750 - routers.documents - WARNING - Firestore operation failed (non-critical): 403 Cloud Firestore API has not been used in project rocasoft before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=rocasoft then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry. [reason: "SERVICE_DISABLED"
+domain: "googleapis.com"
+metadata {
+  key: "service"
+  value: "firestore.googleapis.com"
+}
+metadata {
+  key: "serviceTitle"
+  value: "Cloud Firestore API"
+}
+metadata {
+  key: "containerInfo"
+  value: "rocasoft"
+}
+metadata {
+  key: "consumer"
+  value: "projects/rocasoft"
+}
+metadata {
+  key: "activationUrl"
+  value: "https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=rocasoft"
+}
+, locale: "en-US"
+message: "Cloud Firestore API has not been used in project rocasoft before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=rocasoft then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry."
+, links {
+  description: "Google developers console API activation"
+  url: "https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=rocasoft"
+}
+]
+INFO:     127.0.0.1:62937 - "POST /api/v1/documents/upload HTTP/1.1" 200 OK
+2025-11-23 19:11:05,751 - services.task_queue - INFO - Starting background processing for document: 5a1fc910-8075-4dbd-b650-0131a8a42c4b
+2025-11-23 19:11:06,077 - services.firestore_service - INFO - Firestore client initialized for project: rocasoft
+2025-11-23 19:11:07,006 - services.firestore_service - ERROR - Failed to update document record: 403 Cloud Firestore API has not been used in project rocasoft before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=rocasoft then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry. [reason: "SERVICE_DISABLED"
+domain: "googleapis.com"
+metadata {
+  key: "service"
+  value: "firestore.googleapis.com"
+}
+metadata {
+  key: "serviceTitle"
+  value: "Cloud Firestore API"
+}
+metadata {
+  key: "containerInfo"
+  value: "rocasoft"
+}
+metadata {
+  key: "consumer"
+  value: "projects/rocasoft"
+}
+metadata {
+  key: "activationUrl"
+  value: "https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=rocasoft"
+}
+, locale: "en-US"
+message: "Cloud Firestore API has not been used in project rocasoft before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=rocasoft then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry."
+, links {
+  description: "Google developers console API activation"
+  url: "https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=rocasoft"
+}
+]
+2025-11-23 19:11:07,342 - gcs_service - INFO - GCS client initialized with Application Default Credentials for bucket: voucher-bucket-1
+2025-11-23 19:11:08,142 - services.task_queue - INFO - Downloaded file from GCS: temp/5a1fc910-8075-4dbd-b650-0131a8a42c4b/test_upload.png
+2025-11-23 19:11:08,142 - services.document_processor - INFO - Initializing Document Processor...
+2025-11-23 19:11:08,143 - services.document_processor - INFO - PyMuPDF available: True
+2025-11-23 19:11:08,143 - services.document_processor - INFO - PIL available: True
+2025-11-23 19:11:08,185 - services.document_processor - INFO - Anthropic client initialized with model: claude-sonnet-4-20250529
+2025-11-23 19:11:08,185 - services.document_processor - INFO - Processing document: /var/folders/6g/wz0874x91c77jm2l71q28fgc0000gn/T/tmpjtn1y115.png
+2025-11-23 19:11:08,185 - services.document_processor - INFO - Attempting Anthropic OCR (attempt 1)...
+2025-11-23 19:11:08,185 - services.document_processor - INFO - Image path: /var/folders/6g/wz0874x91c77jm2l71q28fgc0000gn/T/tmpjtn1y115.png
+2025-11-23 19:11:08,185 - services.document_processor - INFO - Encoding file: /var/folders/6g/wz0874x91c77jm2l71q28fgc0000gn/T/tmpjtn1y115.png (size: 287 bytes, type: .png)
+2025-11-23 19:11:08,186 - services.document_processor - INFO - File encoded successfully: 384 base64 characters
+2025-11-23 19:11:08,186 - services.document_processor - INFO - File extension: png
+2025-11-23 19:11:08,186 - services.document_processor - INFO - Media type: image/png
+2025-11-23 19:11:08,514 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 404 Not Found"
+2025-11-23 19:11:08,515 - services.document_processor - ERROR - OCR attempt 1 failed: Error code: 404 - {'type': 'error', 'error': {'type': 'not_found_error', 'message': 'model: claude-sonnet-4-20250529'}, 'request_id': 'req_011CVR2zH768oqv9mJCnST2v'}
+2025-11-23 19:11:08,516 - services.document_processor - INFO - Retrying in 30 seconds...
+2025-11-23 19:11:38,513 - services.document_processor - INFO - Attempting Anthropic OCR (attempt 2)...
+2025-11-23 19:11:38,513 - services.document_processor - INFO - Image path: /var/folders/6g/wz0874x91c77jm2l71q28fgc0000gn/T/tmpjtn1y115.png
+2025-11-23 19:11:38,513 - services.document_processor - INFO - Encoding file: /var/folders/6g/wz0874x91c77jm2l71q28fgc0000gn/T/tmpjtn1y115.png (size: 287 bytes, type: .png)
+2025-11-23 19:11:38,514 - services.document_processor - INFO - File encoded successfully: 384 base64 characters
+2025-11-23 19:11:38,514 - services.document_processor - INFO - File extension: png
+2025-11-23 19:11:38,514 - services.document_processor - INFO - Media type: image/png
+2025-11-23 19:11:38,820 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 404 Not Found"
+2025-11-23 19:11:38,821 - services.document_processor - ERROR - OCR attempt 2 failed: Error code: 404 - {'type': 'error', 'error': {'type': 'not_found_error', 'message': 'model: claude-sonnet-4-20250529'}, 'request_id': 'req_011CVR32WjSX1cpU3z7XE5bV'}
+2025-11-23 19:11:38,822 - services.document_processor - INFO - Retrying in 30 seconds...
+2025-11-23 19:12:08,825 - services.document_processor - INFO - Attempting Anthropic OCR (attempt 3)...
+2025-11-23 19:12:08,828 - services.document_processor - INFO - Image path: /var/folders/6g/wz0874x91c77jm2l71q28fgc0000gn/T/tmpjtn1y115.png
+2025-11-23 19:12:08,828 - services.document_processor - INFO - Encoding file: /var/folders/6g/wz0874x91c77jm2l71q28fgc0000gn/T/tmpjtn1y115.png (size: 287 bytes, type: .png)
+2025-11-23 19:12:08,830 - services.document_processor - INFO - File encoded successfully: 384 base64 characters
+2025-11-23 19:12:08,830 - services.document_processor - INFO - File extension: png
+2025-11-23 19:12:08,830 - services.document_processor - INFO - Media type: image/png
+2025-11-23 19:12:09,178 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 404 Not Found"
+2025-11-23 19:12:09,179 - services.document_processor - ERROR - OCR attempt 3 failed: Error code: 404 - {'type': 'error', 'error': {'type': 'not_found_error', 'message': 'model: claude-sonnet-4-20250529'}, 'request_id': 'req_011CVR34kQ2V3odEHsPS3XA7'}
+2025-11-23 19:12:09,179 - services.document_processor - INFO - Retrying in 30 seconds...
+2025-11-23 19:12:39,185 - services.document_processor - INFO - Attempting Anthropic OCR (attempt 4)...
+2025-11-23 19:12:39,185 - services.document_processor - INFO - Image path: /var/folders/6g/wz0874x91c77jm2l71q28fgc0000gn/T/tmpjtn1y115.png
+2025-11-23 19:12:39,186 - services.document_processor - INFO - Encoding file: /var/folders/6g/wz0874x91c77jm2l71q28fgc0000gn/T/tmpjtn1y115.png (size: 287 bytes, type: .png)
+2025-11-23 19:12:39,186 - services.document_processor - INFO - File encoded successfully: 384 base64 characters
+2025-11-23 19:12:39,186 - services.document_processor - INFO - File extension: png
+2025-11-23 19:12:39,187 - services.document_processor - INFO - Media type: image/png
+2025-11-23 19:12:39,542 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 404 Not Found"
+2025-11-23 19:12:39,544 - services.document_processor - ERROR - OCR attempt 4 failed: Error code: 404 - {'type': 'error', 'error': {'type': 'not_found_error', 'message': 'model: claude-sonnet-4-20250529'}, 'request_id': 'req_011CVR36zCnagFgrF4Uavg16'}
+2025-11-23 19:12:39,544 - services.document_processor - ERROR - Error processing document: OCR_FAILED: Error code: 404 - {'type': 'error', 'error': {'type': 'not_found_error', 'message': 'model: claude-sonnet-4-20250529'}, 'request_id': 'req_011CVR36zCnagFgrF4Uavg16'}
+2025-11-23 19:12:39,544 - services.task_queue - ERROR - Processing failed for document 5a1fc910-8075-4dbd-b650-0131a8a42c4b: OCR_FAILED: Error code: 404 - {'type': 'error', 'error': {'type': 'not_found_error', 'message': 'model: claude-sonnet-4-20250529'}, 'request_id': 'req_011CVR36zCnagFgrF4Uavg16'}
+2025-11-23 19:12:39,686 - services.firestore_service - ERROR - Failed to update document record: 403 Cloud Firestore API has not been used in project rocasoft before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=rocasoft then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry. [reason: "SERVICE_DISABLED"
+domain: "googleapis.com"
+metadata {
+  key: "service"
+  value: "firestore.googleapis.com"
+}
+metadata {
+  key: "serviceTitle"
+  value: "Cloud Firestore API"
+}
+metadata {
+  key: "containerInfo"
+  value: "rocasoft"
+}
+metadata {
+  key: "consumer"
+  value: "projects/rocasoft"
+}
+metadata {
+  key: "activationUrl"
+  value: "https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=rocasoft"
+}
+, locale: "en-US"
+message: "Cloud Firestore API has not been used in project rocasoft before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=rocasoft then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry."
+, links {
+  description: "Google developers console API activation"
+  url: "https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=rocasoft"
+}
+]
+2025-11-23 19:12:40,469 - services.task_queue - INFO - Deleted temp file from GCS: temp/5a1fc910-8075-4dbd-b650-0131a8a42c4b/test_upload.png
+2025-11-23 19:12:40,471 - services.task_queue - INFO - Cleaned up local temp file: /var/folders/6g/wz0874x91c77jm2l71q28fgc0000gn/T/tmpjtn1y115.png
+2025-11-23 19:12:40,471 - services.task_queue - INFO - Completed background processing for document: 5a1fc910-8075-4dbd-b650-0131a8a42c4b
+2025-11-23 19:12:50,089 - services.firestore_service - ERROR - Failed to get document: 403 Cloud Firestore API has not been used in project rocasoft before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=rocasoft then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry. [reason: "SERVICE_DISABLED"
+domain: "googleapis.com"
+metadata {
+  key: "service"
+  value: "firestore.googleapis.com"
+}
+metadata {
+  key: "serviceTitle"
+  value: "Cloud Firestore API"
+}
+metadata {
+  key: "containerInfo"
+  value: "rocasoft"
+}
+metadata {
+  key: "consumer"
+  value: "projects/rocasoft"
+}
+metadata {
+  key: "activationUrl"
+  value: "https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=rocasoft"
+}
+, locale: "en-US"
+message: "Cloud Firestore API has not been used in project rocasoft before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=rocasoft then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry."
+, links {
+  description: "Google developers console API activation"
+  url: "https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=rocasoft"
+}
+]
+INFO:     127.0.0.1:63419 - "GET /api/v1/documents/5a1fc910-8075-4dbd-b650-0131a8a42c4b HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:63656 - "GET /docs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63656 - "GET /openapi.json HTTP/1.1" 200 OK
+2025-11-23 19:13:50,395 - gcs_service - INFO - Uploaded file to GCS: temp/f48124c2-92d2-4a20-8927-029c9aac4422/download (5).jpeg (642951 bytes)
+2025-11-23 19:13:50,529 - services.firestore_service - ERROR - Failed to create document record: 403 Cloud Firestore API has not been used in project rocasoft before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=rocasoft then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry. [reason: "SERVICE_DISABLED"
+domain: "googleapis.com"
+metadata {
+  key: "service"
+  value: "firestore.googleapis.com"
+}
+metadata {
+  key: "serviceTitle"
+  value: "Cloud Firestore API"
+}
+metadata {
+  key: "containerInfo"
+  value: "rocasoft"
+}
+metadata {
+  key: "consumer"
+  value: "projects/rocasoft"
+}
+metadata {
+  key: "activationUrl"
+  value: "https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=rocasoft"
+}
+, locale: "en-US"
+message: "Cloud Firestore API has not been used in project rocasoft before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=rocasoft then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry."
+, links {
+  description: "Google developers console API activation"
+  url: "https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=rocasoft"
+}
+]
+2025-11-23 19:13:50,529 - routers.documents - WARNING - Firestore operation failed (non-critical): 403 Cloud Firestore API has not been used in project rocasoft before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=rocasoft then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry. [reason: "SERVICE_DISABLED"
+domain: "googleapis.com"
+metadata {
+  key: "service"
+  value: "firestore.googleapis.com"
+}
+metadata {
+  key: "serviceTitle"
+  value: "Cloud Firestore API"
+}
+metadata {
+  key: "containerInfo"
+  value: "rocasoft"
+}
+metadata {
+  key: "consumer"
+  value: "projects/rocasoft"
+}
+metadata {
+  key: "activationUrl"
+  value: "https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=rocasoft"
+}
+, locale: "en-US"
+message: "Cloud Firestore API has not been used in project rocasoft before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=rocasoft then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry."
+, links {
+  description: "Google developers console API activation"
+  url: "https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=rocasoft"
+}
+]
+INFO:     127.0.0.1:63694 - "POST /api/v1/documents/upload HTTP/1.1" 200 OK
+2025-11-23 19:13:50,530 - services.task_queue - INFO - Starting background processing for document: f48124c2-92d2-4a20-8927-029c9aac4422
+2025-11-23 19:13:50,655 - services.firestore_service - ERROR - Failed to update document record: 403 Cloud Firestore API has not been used in project rocasoft before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=rocasoft then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry. [reason: "SERVICE_DISABLED"
+domain: "googleapis.com"
+metadata {
+  key: "service"
+  value: "firestore.googleapis.com"
+}
+metadata {
+  key: "serviceTitle"
+  value: "Cloud Firestore API"
+}
+metadata {
+  key: "containerInfo"
+  value: "rocasoft"
+}
+metadata {
+  key: "consumer"
+  value: "projects/rocasoft"
+}
+metadata {
+  key: "activationUrl"
+  value: "https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=rocasoft"
+}
+, locale: "en-US"
+message: "Cloud Firestore API has not been used in project rocasoft before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=rocasoft then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry."
+, links {
+  description: "Google developers console API activation"
+  url: "https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=rocasoft"
+}
+]
+2025-11-23 19:13:52,163 - services.task_queue - INFO - Downloaded file from GCS: temp/f48124c2-92d2-4a20-8927-029c9aac4422/download (5).jpeg
+2025-11-23 19:13:52,163 - services.document_processor - INFO - Processing document: /var/folders/6g/wz0874x91c77jm2l71q28fgc0000gn/T/tmpe_eb5u5j.jpeg
+2025-11-23 19:13:52,163 - services.document_processor - INFO - Attempting Anthropic OCR (attempt 1)...
+2025-11-23 19:13:52,163 - services.document_processor - INFO - Image path: /var/folders/6g/wz0874x91c77jm2l71q28fgc0000gn/T/tmpe_eb5u5j.jpeg
+2025-11-23 19:13:52,163 - services.document_processor - INFO - Encoding file: /var/folders/6g/wz0874x91c77jm2l71q28fgc0000gn/T/tmpe_eb5u5j.jpeg (size: 642951 bytes, type: .jpeg)
+2025-11-23 19:13:52,166 - services.document_processor - INFO - File encoded successfully: 857268 base64 characters
+2025-11-23 19:13:52,166 - services.document_processor - INFO - File extension: jpeg
+2025-11-23 19:13:52,166 - services.document_processor - INFO - Media type: image/jpeg
+2025-11-23 19:13:52,654 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 404 Not Found"
+2025-11-23 19:13:52,655 - services.document_processor - ERROR - OCR attempt 1 failed: Error code: 404 - {'type': 'error', 'error': {'type': 'not_found_error', 'message': 'model: claude-sonnet-4-20250529'}, 'request_id': 'req_011CVR3CNtSBiZ9SFMydYfT4'}
+2025-11-23 19:13:52,655 - services.document_processor - INFO - Retrying in 30 seconds...
+2025-11-23 19:14:22,662 - services.document_processor - INFO - Attempting Anthropic OCR (attempt 2)...
+2025-11-23 19:14:22,666 - services.document_processor - INFO - Image path: /var/folders/6g/wz0874x91c77jm2l71q28fgc0000gn/T/tmpe_eb5u5j.jpeg
+2025-11-23 19:14:22,666 - services.document_processor - INFO - Encoding file: /var/folders/6g/wz0874x91c77jm2l71q28fgc0000gn/T/tmpe_eb5u5j.jpeg (size: 642951 bytes, type: .jpeg)
+2025-11-23 19:14:22,672 - services.document_processor - INFO - File encoded successfully: 857268 base64 characters
+2025-11-23 19:14:22,672 - services.document_processor - INFO - File extension: jpeg
+2025-11-23 19:14:22,672 - services.document_processor - INFO - Media type: image/jpeg
+2025-11-23 19:14:23,416 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 404 Not Found"
+2025-11-23 19:14:23,418 - services.document_processor - ERROR - OCR attempt 2 failed: Error code: 404 - {'type': 'error', 'error': {'type': 'not_found_error', 'message': 'model: claude-sonnet-4-20250529'}, 'request_id': 'req_011CVR3EdM8wwSbQSxqsiNFN'}
+2025-11-23 19:14:23,419 - services.document_processor - INFO - Retrying in 30 seconds...
+2025-11-23 19:14:53,426 - services.document_processor - INFO - Attempting Anthropic OCR (attempt 3)...
+2025-11-23 19:14:53,428 - services.document_processor - INFO - Image path: /var/folders/6g/wz0874x91c77jm2l71q28fgc0000gn/T/tmpe_eb5u5j.jpeg
+2025-11-23 19:14:53,428 - services.document_processor - INFO - Encoding file: /var/folders/6g/wz0874x91c77jm2l71q28fgc0000gn/T/tmpe_eb5u5j.jpeg (size: 642951 bytes, type: .jpeg)
+2025-11-23 19:14:53,431 - services.document_processor - INFO - File encoded successfully: 857268 base64 characters
+2025-11-23 19:14:53,432 - services.document_processor - INFO - File extension: jpeg
+2025-11-23 19:14:53,432 - services.document_processor - INFO - Media type: image/jpeg
+2025-11-23 19:14:53,934 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 404 Not Found"
+2025-11-23 19:14:53,934 - services.document_processor - ERROR - OCR attempt 3 failed: Error code: 404 - {'type': 'error', 'error': {'type': 'not_found_error', 'message': 'model: claude-sonnet-4-20250529'}, 'request_id': 'req_011CVR3GtggaPDgYGYHQY89T'}
+2025-11-23 19:14:53,935 - services.document_processor - INFO - Retrying in 30 seconds...
+2025-11-23 19:15:23,939 - services.document_processor - INFO - Attempting Anthropic OCR (attempt 4)...
+2025-11-23 19:15:23,940 - services.document_processor - INFO - Image path: /var/folders/6g/wz0874x91c77jm2l71q28fgc0000gn/T/tmpe_eb5u5j.jpeg
+2025-11-23 19:15:23,940 - services.document_processor - INFO - Encoding file: /var/folders/6g/wz0874x91c77jm2l71q28fgc0000gn/T/tmpe_eb5u5j.jpeg (size: 642951 bytes, type: .jpeg)
+2025-11-23 19:15:23,944 - services.document_processor - INFO - File encoded successfully: 857268 base64 characters
+2025-11-23 19:15:23,944 - services.document_processor - INFO - File extension: jpeg
+2025-11-23 19:15:23,944 - services.document_processor - INFO - Media type: image/jpeg
+2025-11-23 19:15:24,647 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 404 Not Found"
+2025-11-23 19:15:24,649 - services.document_processor - ERROR - OCR attempt 4 failed: Error code: 404 - {'type': 'error', 'error': {'type': 'not_found_error', 'message': 'model: claude-sonnet-4-20250529'}, 'request_id': 'req_011CVR3K9Vy5eLg3zg1ANUoA'}
+2025-11-23 19:15:24,650 - services.document_processor - ERROR - Error processing document: OCR_FAILED: Error code: 404 - {'type': 'error', 'error': {'type': 'not_found_error', 'message': 'model: claude-sonnet-4-20250529'}, 'request_id': 'req_011CVR3K9Vy5eLg3zg1ANUoA'}
+2025-11-23 19:15:24,650 - services.task_queue - ERROR - Processing failed for document f48124c2-92d2-4a20-8927-029c9aac4422: OCR_FAILED: Error code: 404 - {'type': 'error', 'error': {'type': 'not_found_error', 'message': 'model: claude-sonnet-4-20250529'}, 'request_id': 'req_011CVR3K9Vy5eLg3zg1ANUoA'}
+2025-11-23 19:15:24,793 - services.firestore_service - ERROR - Failed to update document record: 403 Cloud Firestore API has not been used in project rocasoft before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=rocasoft then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry. [reason: "SERVICE_DISABLED"
+domain: "googleapis.com"
+metadata {
+  key: "service"
+  value: "firestore.googleapis.com"
+}
+metadata {
+  key: "serviceTitle"
+  value: "Cloud Firestore API"
+}
+metadata {
+  key: "containerInfo"
+  value: "rocasoft"
+}
+metadata {
+  key: "consumer"
+  value: "projects/rocasoft"
+}
+metadata {
+  key: "activationUrl"
+  value: "https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=rocasoft"
+}
+, locale: "en-US"
+message: "Cloud Firestore API has not been used in project rocasoft before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=rocasoft then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry."
+, links {
+  description: "Google developers console API activation"
+  url: "https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=rocasoft"
+}
+]
+2025-11-23 19:15:25,188 - services.task_queue - INFO - Deleted temp file from GCS: temp/f48124c2-92d2-4a20-8927-029c9aac4422/download (5).jpeg
+2025-11-23 19:15:25,189 - services.task_queue - INFO - Cleaned up local temp file: /var/folders/6g/wz0874x91c77jm2l71q28fgc0000gn/T/tmpe_eb5u5j.jpeg
+2025-11-23 19:15:25,189 - services.task_queue - INFO - Completed background processing for document: f48124c2-92d2-4a20-8927-029c9aac4422
+2025-11-23 19:15:25,325 - services.firestore_service - ERROR - Failed to create job record: 403 Cloud Firestore API has not been used in project rocasoft before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=rocasoft then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry. [reason: "SERVICE_DISABLED"
+domain: "googleapis.com"
+metadata {
+  key: "service"
+  value: "firestore.googleapis.com"
+}
+metadata {
+  key: "serviceTitle"
+  value: "Cloud Firestore API"
+}
+metadata {
+  key: "containerInfo"
+  value: "rocasoft"
+}
+metadata {
+  key: "consumer"
+  value: "projects/rocasoft"
+}
+metadata {
+  key: "activationUrl"
+  value: "https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=rocasoft"
+}
+, locale: "en-US"
+message: "Cloud Firestore API has not been used in project rocasoft before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=rocasoft then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry."
+, links {
+  description: "Google developers console API activation"
+  url: "https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=rocasoft"
+}
+]
+2025-11-23 19:15:25,325 - routers.documents - WARNING - Firestore operation failed (non-critical): 403 Cloud Firestore API has not been used in project rocasoft before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=rocasoft then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry. [reason: "SERVICE_DISABLED"
+domain: "googleapis.com"
+metadata {
+  key: "service"
+  value: "firestore.googleapis.com"
+}
+metadata {
+  key: "serviceTitle"
+  value: "Cloud Firestore API"
+}
+metadata {
+  key: "containerInfo"
+  value: "rocasoft"
+}
+metadata {
+  key: "consumer"
+  value: "projects/rocasoft"
+}
+metadata {
+  key: "activationUrl"
+  value: "https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=rocasoft"
+}
+, locale: "en-US"
+message: "Cloud Firestore API has not been used in project rocasoft before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=rocasoft then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry."
+, links {
+  description: "Google developers console API activation"
+  url: "https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=rocasoft"
+}
+]
+2025-11-23 19:15:27,076 - gcs_service - INFO - Uploaded file to GCS: temp/61eb5b18-6f76-47eb-a5c0-d572806e0044/f54bc5ae-0969-4d79-9540-ee51c8041123/download (7).jpeg (652463 bytes)
+2025-11-23 19:15:27,197 - services.firestore_service - ERROR - Failed to create document record: 403 Cloud Firestore API has not been used in project rocasoft before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=rocasoft then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry. [reason: "SERVICE_DISABLED"
+domain: "googleapis.com"
+metadata {
+  key: "service"
+  value: "firestore.googleapis.com"
+}
+metadata {
+  key: "serviceTitle"
+  value: "Cloud Firestore API"
+}
+metadata {
+  key: "containerInfo"
+  value: "rocasoft"
+}
+metadata {
+  key: "consumer"
+  value: "projects/rocasoft"
+}
+metadata {
+  key: "activationUrl"
+  value: "https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=rocasoft"
+}
+, locale: "en-US"
+message: "Cloud Firestore API has not been used in project rocasoft before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=rocasoft then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry."
+, links {
+  description: "Google developers console API activation"
+  url: "https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=rocasoft"
+}
+]
+2025-11-23 19:15:27,198 - routers.documents - WARNING - Firestore operation failed (non-critical): 403 Cloud Firestore API has not been used in project rocasoft before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=rocasoft then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry. [reason: "SERVICE_DISABLED"
+domain: "googleapis.com"
+metadata {
+  key: "service"
+  value: "firestore.googleapis.com"
+}
+metadata {
+  key: "serviceTitle"
+  value: "Cloud Firestore API"
+}
+metadata {
+  key: "containerInfo"
+  value: "rocasoft"
+}
+metadata {
+  key: "consumer"
+  value: "projects/rocasoft"
+}
+metadata {
+  key: "activationUrl"
+  value: "https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=rocasoft"
+}
+, locale: "en-US"
+message: "Cloud Firestore API has not been used in project rocasoft before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=rocasoft then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry."
+, links {
+  description: "Google developers console API activation"
+  url: "https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=rocasoft"
+}
+]
+2025-11-23 19:15:27,331 - services.firestore_service - ERROR - Failed to update job record: 403 Cloud Firestore API has not been used in project rocasoft before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=rocasoft then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry. [reason: "SERVICE_DISABLED"
+domain: "googleapis.com"
+metadata {
+  key: "service"
+  value: "firestore.googleapis.com"
+}
+metadata {
+  key: "serviceTitle"
+  value: "Cloud Firestore API"
+}
+metadata {
+  key: "containerInfo"
+  value: "rocasoft"
+}
+metadata {
+  key: "consumer"
+  value: "projects/rocasoft"
+}
+metadata {
+  key: "activationUrl"
+  value: "https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=rocasoft"
+}
+, locale: "en-US"
+message: "Cloud Firestore API has not been used in project rocasoft before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=rocasoft then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry."
+, links {
+  description: "Google developers console API activation"
+  url: "https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=rocasoft"
+}
+]
+INFO:     127.0.0.1:63960 - "POST /api/v1/documents/upload/batch HTTP/1.1" 200 OK
+2025-11-23 19:15:27,332 - services.task_queue - INFO - Starting background processing for document: f54bc5ae-0969-4d79-9540-ee51c8041123
+2025-11-23 19:15:27,454 - services.firestore_service - ERROR - Failed to update document record: 403 Cloud Firestore API has not been used in project rocasoft before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=rocasoft then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry. [reason: "SERVICE_DISABLED"
+domain: "googleapis.com"
+metadata {
+  key: "service"
+  value: "firestore.googleapis.com"
+}
+metadata {
+  key: "serviceTitle"
+  value: "Cloud Firestore API"
+}
+metadata {
+  key: "containerInfo"
+  value: "rocasoft"
+}
+metadata {
+  key: "consumer"
+  value: "projects/rocasoft"
+}
+metadata {
+  key: "activationUrl"
+  value: "https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=rocasoft"
+}
+, locale: "en-US"
+message: "Cloud Firestore API has not been used in project rocasoft before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=rocasoft then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry."
+, links {
+  description: "Google developers console API activation"
+  url: "https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=rocasoft"
+}
+]
+2025-11-23 19:15:27,574 - services.firestore_service - ERROR - Failed to update job record: 403 Cloud Firestore API has not been used in project rocasoft before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=rocasoft then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry. [reason: "SERVICE_DISABLED"
+domain: "googleapis.com"
+metadata {
+  key: "service"
+  value: "firestore.googleapis.com"
+}
+metadata {
+  key: "serviceTitle"
+  value: "Cloud Firestore API"
+}
+metadata {
+  key: "containerInfo"
+  value: "rocasoft"
+}
+metadata {
+  key: "consumer"
+  value: "projects/rocasoft"
+}
+metadata {
+  key: "activationUrl"
+  value: "https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=rocasoft"
+}
+, locale: "en-US"
+message: "Cloud Firestore API has not been used in project rocasoft before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=rocasoft then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry."
+, links {
+  description: "Google developers console API activation"
+  url: "https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=rocasoft"
+}
+]
+2025-11-23 19:15:29,072 - services.task_queue - INFO - Downloaded file from GCS: temp/61eb5b18-6f76-47eb-a5c0-d572806e0044/f54bc5ae-0969-4d79-9540-ee51c8041123/download (7).jpeg
+2025-11-23 19:15:29,072 - services.document_processor - INFO - Processing document: /var/folders/6g/wz0874x91c77jm2l71q28fgc0000gn/T/tmp1pde_x1r.jpeg
+2025-11-23 19:15:29,073 - services.document_processor - INFO - Attempting Anthropic OCR (attempt 1)...
+2025-11-23 19:15:29,073 - services.document_processor - INFO - Image path: /var/folders/6g/wz0874x91c77jm2l71q28fgc0000gn/T/tmp1pde_x1r.jpeg
+2025-11-23 19:15:29,073 - services.document_processor - INFO - Encoding file: /var/folders/6g/wz0874x91c77jm2l71q28fgc0000gn/T/tmp1pde_x1r.jpeg (size: 652463 bytes, type: .jpeg)
+2025-11-23 19:15:29,076 - services.document_processor - INFO - File encoded successfully: 869952 base64 characters
+2025-11-23 19:15:29,076 - services.document_processor - INFO - File extension: jpeg
+2025-11-23 19:15:29,076 - services.document_processor - INFO - Media type: image/jpeg
+2025-11-23 19:15:29,538 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 404 Not Found"
+2025-11-23 19:15:29,541 - services.document_processor - ERROR - OCR attempt 1 failed: Error code: 404 - {'type': 'error', 'error': {'type': 'not_found_error', 'message': 'model: claude-sonnet-4-20250529'}, 'request_id': 'req_011CVR3KX9TuabF5BMFxxFA9'}
+2025-11-23 19:15:29,541 - services.document_processor - INFO - Retrying in 30 seconds...
+2025-11-23 19:15:59,547 - services.document_processor - INFO - Attempting Anthropic OCR (attempt 2)...
+2025-11-23 19:15:59,550 - services.document_processor - INFO - Image path: /var/folders/6g/wz0874x91c77jm2l71q28fgc0000gn/T/tmp1pde_x1r.jpeg
+2025-11-23 19:15:59,550 - services.document_processor - INFO - Encoding file: /var/folders/6g/wz0874x91c77jm2l71q28fgc0000gn/T/tmp1pde_x1r.jpeg (size: 652463 bytes, type: .jpeg)
+2025-11-23 19:15:59,554 - services.document_processor - INFO - File encoded successfully: 869952 base64 characters
+2025-11-23 19:15:59,554 - services.document_processor - INFO - File extension: jpeg
+2025-11-23 19:15:59,554 - services.document_processor - INFO - Media type: image/jpeg
+2025-11-23 19:16:00,150 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 404 Not Found"
+2025-11-23 19:16:00,154 - services.document_processor - ERROR - OCR attempt 2 failed: Error code: 404 - {'type': 'error', 'error': {'type': 'not_found_error', 'message': 'model: claude-sonnet-4-20250529'}, 'request_id': 'req_011CVR3MmWifxu8XC4Qn6dKe'}
+2025-11-23 19:16:00,154 - services.document_processor - INFO - Retrying in 30 seconds...
+2025-11-23 19:16:30,160 - services.document_processor - INFO - Attempting Anthropic OCR (attempt 3)...
+2025-11-23 19:16:30,162 - services.document_processor - INFO - Image path: /var/folders/6g/wz0874x91c77jm2l71q28fgc0000gn/T/tmp1pde_x1r.jpeg
+2025-11-23 19:16:30,162 - services.document_processor - INFO - Encoding file: /var/folders/6g/wz0874x91c77jm2l71q28fgc0000gn/T/tmp1pde_x1r.jpeg (size: 652463 bytes, type: .jpeg)
+2025-11-23 19:16:30,165 - services.document_processor - INFO - File encoded successfully: 869952 base64 characters
+2025-11-23 19:16:30,165 - services.document_processor - INFO - File extension: jpeg
+2025-11-23 19:16:30,165 - services.document_processor - INFO - Media type: image/jpeg
+2025-11-23 19:16:30,658 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 404 Not Found"
+2025-11-23 19:16:30,663 - services.document_processor - ERROR - OCR attempt 3 failed: Error code: 404 - {'type': 'error', 'error': {'type': 'not_found_error', 'message': 'model: claude-sonnet-4-20250529'}, 'request_id': 'req_011CVR3Q2NVFrK2FYm26wwHi'}
+2025-11-23 19:16:30,663 - services.document_processor - INFO - Retrying in 30 seconds...
+2025-11-23 19:17:00,669 - services.document_processor - INFO - Attempting Anthropic OCR (attempt 4)...
+2025-11-23 19:17:00,671 - services.document_processor - INFO - Image path: /var/folders/6g/wz0874x91c77jm2l71q28fgc0000gn/T/tmp1pde_x1r.jpeg
+2025-11-23 19:17:00,672 - services.document_processor - INFO - Encoding file: /var/folders/6g/wz0874x91c77jm2l71q28fgc0000gn/T/tmp1pde_x1r.jpeg (size: 652463 bytes, type: .jpeg)
+2025-11-23 19:17:00,676 - services.document_processor - INFO - File encoded successfully: 869952 base64 characters
+2025-11-23 19:17:00,676 - services.document_processor - INFO - File extension: jpeg
+2025-11-23 19:17:00,676 - services.document_processor - INFO - Media type: image/jpeg
+2025-11-23 19:17:01,200 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 404 Not Found"
+2025-11-23 19:17:01,211 - services.document_processor - ERROR - OCR attempt 4 failed: Error code: 404 - {'type': 'error', 'error': {'type': 'not_found_error', 'message': 'model: claude-sonnet-4-20250529'}, 'request_id': 'req_011CVR3SGxdjb6ji4ugB384W'}
+2025-11-23 19:17:01,212 - services.document_processor - ERROR - Error processing document: OCR_FAILED: Error code: 404 - {'type': 'error', 'error': {'type': 'not_found_error', 'message': 'model: claude-sonnet-4-20250529'}, 'request_id': 'req_011CVR3SGxdjb6ji4ugB384W'}
+2025-11-23 19:17:01,212 - services.task_queue - ERROR - Processing failed for document f54bc5ae-0969-4d79-9540-ee51c8041123: OCR_FAILED: Error code: 404 - {'type': 'error', 'error': {'type': 'not_found_error', 'message': 'model: claude-sonnet-4-20250529'}, 'request_id': 'req_011CVR3SGxdjb6ji4ugB384W'}
+2025-11-23 19:17:02,212 - services.firestore_service - ERROR - Failed to update document record: 404 No document to update: projects/rocasoft/databases/(default)/documents/documents/f54bc5ae-0969-4d79-9540-ee51c8041123
+2025-11-23 19:17:03,330 - services.firestore_service - ERROR - Failed to update job progress: 404 No document to update: projects/rocasoft/databases/(default)/documents/processing_jobs/61eb5b18-6f76-47eb-a5c0-d572806e0044
+2025-11-23 19:17:03,717 - services.task_queue - INFO - Deleted temp file from GCS: temp/61eb5b18-6f76-47eb-a5c0-d572806e0044/f54bc5ae-0969-4d79-9540-ee51c8041123/download (7).jpeg
+2025-11-23 19:17:03,718 - services.task_queue - INFO - Cleaned up local temp file: /var/folders/6g/wz0874x91c77jm2l71q28fgc0000gn/T/tmp1pde_x1r.jpeg
+2025-11-23 19:17:03,718 - services.task_queue - INFO - Completed background processing for document: f54bc5ae-0969-4d79-9540-ee51c8041123
+INFO:     127.0.0.1:53025 - "GET /health HTTP/1.1" 200 OK
+2025-11-23 19:57:42,779 - gcs_service - INFO - Uploaded file to GCS: temp/22cc3066-5bf6-4470-975c-6c4880cd1447/test_upload.png (287 bytes)
+2025-11-23 19:58:02,591 - services.firestore_service - INFO - Created document record: 22cc3066-5bf6-4470-975c-6c4880cd1447
+INFO:     127.0.0.1:53027 - "POST /api/v1/documents/upload HTTP/1.1" 200 OK
+2025-11-23 19:58:02,596 - services.task_queue - INFO - Starting background processing for document: 22cc3066-5bf6-4470-975c-6c4880cd1447
+2025-11-23 19:58:22,275 - services.firestore_service - INFO - Updated document record: 22cc3066-5bf6-4470-975c-6c4880cd1447
+2025-11-23 19:58:42,420 - services.task_queue - INFO - Downloaded file from GCS: temp/22cc3066-5bf6-4470-975c-6c4880cd1447/test_upload.png
+2025-11-23 19:58:42,421 - services.document_processor - INFO - Processing document: /var/folders/6g/wz0874x91c77jm2l71q28fgc0000gn/T/tmpoe9jom6d.png
+2025-11-23 19:58:42,421 - services.document_processor - INFO - Attempting Anthropic OCR (attempt 1)...
+2025-11-23 19:58:42,421 - services.document_processor - INFO - Image path: /var/folders/6g/wz0874x91c77jm2l71q28fgc0000gn/T/tmpoe9jom6d.png
+2025-11-23 19:58:42,422 - services.document_processor - INFO - Encoding file: /var/folders/6g/wz0874x91c77jm2l71q28fgc0000gn/T/tmpoe9jom6d.png (size: 287 bytes, type: .png)
+2025-11-23 19:58:42,422 - services.document_processor - INFO - File encoded successfully: 384 base64 characters
+2025-11-23 19:58:42,422 - services.document_processor - INFO - File extension: png
+2025-11-23 19:58:42,422 - services.document_processor - INFO - Media type: image/png
+2025-11-23 19:58:42,885 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 404 Not Found"
+2025-11-23 19:58:42,887 - services.document_processor - ERROR - OCR attempt 1 failed: Error code: 404 - {'type': 'error', 'error': {'type': 'not_found_error', 'message': 'model: claude-sonnet-4-20250529'}, 'request_id': 'req_011CVR6cgenm1WKooUnAkSmt'}
+2025-11-23 19:58:42,888 - services.document_processor - INFO - Retrying in 30 seconds...
+2025-11-23 19:59:12,897 - services.document_processor - INFO - Attempting Anthropic OCR (attempt 2)...
+2025-11-23 19:59:12,898 - services.document_processor - INFO - Image path: /var/folders/6g/wz0874x91c77jm2l71q28fgc0000gn/T/tmpoe9jom6d.png
+2025-11-23 19:59:12,898 - services.document_processor - INFO - Encoding file: /var/folders/6g/wz0874x91c77jm2l71q28fgc0000gn/T/tmpoe9jom6d.png (size: 287 bytes, type: .png)
+2025-11-23 19:59:12,899 - services.document_processor - INFO - File encoded successfully: 384 base64 characters
+2025-11-23 19:59:12,899 - services.document_processor - INFO - File extension: png
+2025-11-23 19:59:12,899 - services.document_processor - INFO - Media type: image/png
+2025-11-23 19:59:13,231 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 404 Not Found"
+2025-11-23 19:59:13,233 - services.document_processor - ERROR - OCR attempt 2 failed: Error code: 404 - {'type': 'error', 'error': {'type': 'not_found_error', 'message': 'model: claude-sonnet-4-20250529'}, 'request_id': 'req_011CVR6evY1yGPjoG58XDKTf'}
+2025-11-23 19:59:13,234 - services.document_processor - INFO - Retrying in 30 seconds...
+2025-11-23 19:59:43,238 - services.document_processor - INFO - Attempting Anthropic OCR (attempt 3)...
+2025-11-23 19:59:43,239 - services.document_processor - INFO - Image path: /var/folders/6g/wz0874x91c77jm2l71q28fgc0000gn/T/tmpoe9jom6d.png
+2025-11-23 19:59:43,239 - services.document_processor - INFO - Encoding file: /var/folders/6g/wz0874x91c77jm2l71q28fgc0000gn/T/tmpoe9jom6d.png (size: 287 bytes, type: .png)
+2025-11-23 19:59:43,239 - services.document_processor - INFO - File encoded successfully: 384 base64 characters
+2025-11-23 19:59:43,239 - services.document_processor - INFO - File extension: png
+2025-11-23 19:59:43,240 - services.document_processor - INFO - Media type: image/png
+2025-11-23 19:59:43,584 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 404 Not Found"
+2025-11-23 19:59:43,586 - services.document_processor - ERROR - OCR attempt 3 failed: Error code: 404 - {'type': 'error', 'error': {'type': 'not_found_error', 'message': 'model: claude-sonnet-4-20250529'}, 'request_id': 'req_011CVR6hA88mRvqbQWan3eHa'}
+2025-11-23 19:59:43,586 - services.document_processor - INFO - Retrying in 30 seconds...
+2025-11-23 20:00:13,591 - services.document_processor - INFO - Attempting Anthropic OCR (attempt 4)...
+2025-11-23 20:00:13,594 - services.document_processor - INFO - Image path: /var/folders/6g/wz0874x91c77jm2l71q28fgc0000gn/T/tmpoe9jom6d.png
+2025-11-23 20:00:13,595 - services.document_processor - INFO - Encoding file: /var/folders/6g/wz0874x91c77jm2l71q28fgc0000gn/T/tmpoe9jom6d.png (size: 287 bytes, type: .png)
+2025-11-23 20:00:13,596 - services.document_processor - INFO - File encoded successfully: 384 base64 characters
+2025-11-23 20:00:13,596 - services.document_processor - INFO - File extension: png
+2025-11-23 20:00:13,596 - services.document_processor - INFO - Media type: image/png
+2025-11-23 20:00:13,930 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 404 Not Found"
+2025-11-23 20:00:13,931 - services.document_processor - ERROR - OCR attempt 4 failed: Error code: 404 - {'type': 'error', 'error': {'type': 'not_found_error', 'message': 'model: claude-sonnet-4-20250529'}, 'request_id': 'req_011CVR6jPtB47FQBAqzVKL12'}
+2025-11-23 20:00:13,931 - services.document_processor - ERROR - Error processing document: OCR_FAILED: Error code: 404 - {'type': 'error', 'error': {'type': 'not_found_error', 'message': 'model: claude-sonnet-4-20250529'}, 'request_id': 'req_011CVR6jPtB47FQBAqzVKL12'}
+2025-11-23 20:00:13,931 - services.task_queue - ERROR - Processing failed for document 22cc3066-5bf6-4470-975c-6c4880cd1447: OCR_FAILED: Error code: 404 - {'type': 'error', 'error': {'type': 'not_found_error', 'message': 'model: claude-sonnet-4-20250529'}, 'request_id': 'req_011CVR6jPtB47FQBAqzVKL12'}
+2025-11-23 20:00:15,569 - services.firestore_service - INFO - Updated document record: 22cc3066-5bf6-4470-975c-6c4880cd1447
+2025-11-23 20:00:16,191 - services.task_queue - INFO - Deleted temp file from GCS: temp/22cc3066-5bf6-4470-975c-6c4880cd1447/test_upload.png
+2025-11-23 20:00:16,192 - services.task_queue - INFO - Cleaned up local temp file: /var/folders/6g/wz0874x91c77jm2l71q28fgc0000gn/T/tmpoe9jom6d.png
+2025-11-23 20:00:16,192 - services.task_queue - INFO - Completed background processing for document: 22cc3066-5bf6-4470-975c-6c4880cd1447
+INFO:     127.0.0.1:53763 - "GET /api/v1/documents/22cc3066-5bf6-4470-975c-6c4880cd1447 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49844 - "OPTIONS /health HTTP/1.1" 400 Bad Request
+INFO:     127.0.0.1:49844 - "OPTIONS /api/v1/documents?page=1&page_size=20 HTTP/1.1" 400 Bad Request
+INFO:     127.0.0.1:51951 - "GET /node_modules/.vite/deps/chunk-TRNWTHID.js?v=be071494 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51954 - "GET /node_modules/.vite/deps/react-router-dom.js?v=be071494 HTTP/1.1" 404 Not Found
+INFO:     ('127.0.0.1', 51956) - "WebSocket /?token=3M9DMhz8Uory" 403
+INFO:     127.0.0.1:51951 - "GET /src/pages/BusinessVerification.tsx HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51958 - "GET /src/pages/DocumentArchive.tsx?t=1763719560252 HTTP/1.1" 404 Not Found
+INFO:     connection rejected (403 Forbidden)
+INFO:     127.0.0.1:51954 - "GET /src/pages/DocumentScannerPage.tsx?t=1763719560252 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51961 - "GET /src/pages/BrowseFiles.tsx?t=1763719560252 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51958 - "GET /node_modules/.vite/deps/lucide-react.js?v=be071494 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51951 - "GET /src/services/documentProcessingService.ts?t=1763719560252 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51963 - "GET /src/pages/BatchDetailsSimple.tsx?t=1763719560252 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51964 - "GET /src/pages/KYCAMLCheck.tsx HTTP/1.1" 404 Not Found
+INFO:     connection closed
+INFO:     127.0.0.1:51967 - "GET /manifest.json HTTP/1.1" 404 Not Found
+INFO:     ('127.0.0.1', 51968) - "WebSocket /?token=3M9DMhz8Uory" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:50406 - "OPTIONS /health HTTP/1.1" 400 Bad Request
+INFO:     127.0.0.1:50406 - "OPTIONS /api/v1/documents?page=1&page_size=20 HTTP/1.1" 400 Bad Request
+INFO:     127.0.0.1:52616 - "OPTIONS /health HTTP/1.1" 400 Bad Request
+INFO:     127.0.0.1:52616 - "OPTIONS /api/v1/documents?page=1&page_size=20 HTTP/1.1" 400 Bad Request
+INFO:     127.0.0.1:57069 - "GET /docs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57069 - "GET /openapi.json HTTP/1.1" 200 OK
+2025-11-24 11:02:35,896 - gcs_service - INFO - Uploaded file to GCS: temp/0ca7b9b3-017e-4c9e-8dab-4aec1053a1d9/download (7).jpeg (652463 bytes)
+2025-11-24 11:02:38,253 - services.firestore_service - INFO - Created document record: 0ca7b9b3-017e-4c9e-8dab-4aec1053a1d9
+INFO:     127.0.0.1:58432 - "POST /api/v1/documents/upload HTTP/1.1" 200 OK
+2025-11-24 11:02:38,264 - services.task_queue - INFO - Starting background processing for document: 0ca7b9b3-017e-4c9e-8dab-4aec1053a1d9
+2025-11-24 11:02:40,502 - services.firestore_service - INFO - Updated document record: 0ca7b9b3-017e-4c9e-8dab-4aec1053a1d9
+2025-11-24 11:02:42,816 - services.task_queue - INFO - Downloaded file from GCS: temp/0ca7b9b3-017e-4c9e-8dab-4aec1053a1d9/download (7).jpeg
+2025-11-24 11:02:42,816 - services.document_processor - INFO - Processing document: /var/folders/6g/wz0874x91c77jm2l71q28fgc0000gn/T/tmptp36ie_4.jpeg
+2025-11-24 11:02:42,816 - services.document_processor - INFO - Attempting Anthropic OCR (attempt 1)...
+2025-11-24 11:02:42,816 - services.document_processor - INFO - Image path: /var/folders/6g/wz0874x91c77jm2l71q28fgc0000gn/T/tmptp36ie_4.jpeg
+2025-11-24 11:02:42,816 - services.document_processor - INFO - Encoding file: /var/folders/6g/wz0874x91c77jm2l71q28fgc0000gn/T/tmptp36ie_4.jpeg (size: 652463 bytes, type: .jpeg)
+2025-11-24 11:02:42,819 - services.document_processor - INFO - File encoded successfully: 869952 base64 characters
+2025-11-24 11:02:42,819 - services.document_processor - INFO - File extension: jpeg
+2025-11-24 11:02:42,820 - services.document_processor - INFO - Media type: image/jpeg
+2025-11-24 11:02:43,705 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 404 Not Found"
+2025-11-24 11:02:43,709 - services.document_processor - ERROR - OCR attempt 1 failed: Error code: 404 - {'type': 'error', 'error': {'type': 'not_found_error', 'message': 'model: claude-sonnet-4-20250529'}, 'request_id': 'req_011CVSHZ36n13imgYiwS8GiU'}
+2025-11-24 11:02:43,709 - services.document_processor - INFO - Retrying in 30 seconds...
+2025-11-24 11:03:13,716 - services.document_processor - INFO - Attempting Anthropic OCR (attempt 2)...
+2025-11-24 11:03:13,720 - services.document_processor - INFO - Image path: /var/folders/6g/wz0874x91c77jm2l71q28fgc0000gn/T/tmptp36ie_4.jpeg
+2025-11-24 11:03:13,721 - services.document_processor - INFO - Encoding file: /var/folders/6g/wz0874x91c77jm2l71q28fgc0000gn/T/tmptp36ie_4.jpeg (size: 652463 bytes, type: .jpeg)
+2025-11-24 11:03:13,727 - services.document_processor - INFO - File encoded successfully: 869952 base64 characters
+2025-11-24 11:03:13,727 - services.document_processor - INFO - File extension: jpeg
+2025-11-24 11:03:13,728 - services.document_processor - INFO - Media type: image/jpeg
+2025-11-24 11:03:14,653 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 404 Not Found"
+2025-11-24 11:03:14,654 - services.document_processor - ERROR - OCR attempt 2 failed: Error code: 404 - {'type': 'error', 'error': {'type': 'not_found_error', 'message': 'model: claude-sonnet-4-20250529'}, 'request_id': 'req_011CVSHbJy4yziS5512rWppN'}
+2025-11-24 11:03:14,655 - services.document_processor - INFO - Retrying in 30 seconds...
+2025-11-24 11:03:44,660 - services.document_processor - INFO - Attempting Anthropic OCR (attempt 3)...
+2025-11-24 11:03:44,662 - services.document_processor - INFO - Image path: /var/folders/6g/wz0874x91c77jm2l71q28fgc0000gn/T/tmptp36ie_4.jpeg
+2025-11-24 11:03:44,662 - services.document_processor - INFO - Encoding file: /var/folders/6g/wz0874x91c77jm2l71q28fgc0000gn/T/tmptp36ie_4.jpeg (size: 652463 bytes, type: .jpeg)
+2025-11-24 11:03:44,668 - services.document_processor - INFO - File encoded successfully: 869952 base64 characters
+2025-11-24 11:03:44,668 - services.document_processor - INFO - File extension: jpeg
+2025-11-24 11:03:44,668 - services.document_processor - INFO - Media type: image/jpeg
+2025-11-24 11:03:45,528 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 404 Not Found"
+2025-11-24 11:03:45,532 - services.document_processor - ERROR - OCR attempt 3 failed: Error code: 404 - {'type': 'error', 'error': {'type': 'not_found_error', 'message': 'model: claude-sonnet-4-20250529'}, 'request_id': 'req_011CVSHdbT4ZqVFY9R7b7CZF'}
+2025-11-24 11:03:45,532 - services.document_processor - INFO - Retrying in 30 seconds...
+2025-11-24 11:04:15,538 - services.document_processor - INFO - Attempting Anthropic OCR (attempt 4)...
+2025-11-24 11:04:15,540 - services.document_processor - INFO - Image path: /var/folders/6g/wz0874x91c77jm2l71q28fgc0000gn/T/tmptp36ie_4.jpeg
+2025-11-24 11:04:15,540 - services.document_processor - INFO - Encoding file: /var/folders/6g/wz0874x91c77jm2l71q28fgc0000gn/T/tmptp36ie_4.jpeg (size: 652463 bytes, type: .jpeg)
+2025-11-24 11:04:15,544 - services.document_processor - INFO - File encoded successfully: 869952 base64 characters
+2025-11-24 11:04:15,544 - services.document_processor - INFO - File extension: jpeg
+2025-11-24 11:04:15,544 - services.document_processor - INFO - Media type: image/jpeg
+2025-11-24 11:04:16,458 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 404 Not Found"
+2025-11-24 11:04:16,460 - services.document_processor - ERROR - OCR attempt 4 failed: Error code: 404 - {'type': 'error', 'error': {'type': 'not_found_error', 'message': 'model: claude-sonnet-4-20250529'}, 'request_id': 'req_011CVSHfsKc4pjcmx9bmpHkM'}
+2025-11-24 11:04:16,460 - services.document_processor - ERROR - Error processing document: OCR_FAILED: Error code: 404 - {'type': 'error', 'error': {'type': 'not_found_error', 'message': 'model: claude-sonnet-4-20250529'}, 'request_id': 'req_011CVSHfsKc4pjcmx9bmpHkM'}
+2025-11-24 11:04:16,460 - services.task_queue - ERROR - Processing failed for document 0ca7b9b3-017e-4c9e-8dab-4aec1053a1d9: OCR_FAILED: Error code: 404 - {'type': 'error', 'error': {'type': 'not_found_error', 'message': 'model: claude-sonnet-4-20250529'}, 'request_id': 'req_011CVSHfsKc4pjcmx9bmpHkM'}
+2025-11-24 11:04:16,772 - services.firestore_service - INFO - Updated document record: 0ca7b9b3-017e-4c9e-8dab-4aec1053a1d9
+2025-11-24 11:04:17,355 - services.task_queue - INFO - Deleted temp file from GCS: temp/0ca7b9b3-017e-4c9e-8dab-4aec1053a1d9/download (7).jpeg
+2025-11-24 11:04:17,357 - services.task_queue - INFO - Cleaned up local temp file: /var/folders/6g/wz0874x91c77jm2l71q28fgc0000gn/T/tmptp36ie_4.jpeg
+2025-11-24 11:04:17,357 - services.task_queue - INFO - Completed background processing for document: 0ca7b9b3-017e-4c9e-8dab-4aec1053a1d9
+INFO:     127.0.0.1:61460 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61462 - "GET /docs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61462 - "GET /openapi.json HTTP/1.1" 200 OK
+2025-11-24 11:14:13,836 - gcs_service - INFO - Uploaded file to GCS: temp/eac5e48c-a1bb-45dd-afb2-37c700a0e14c/download (7).jpeg (652463 bytes)
+2025-11-24 11:14:15,463 - services.firestore_service - INFO - Created document record: eac5e48c-a1bb-45dd-afb2-37c700a0e14c
+INFO:     127.0.0.1:61498 - "POST /api/v1/documents/upload HTTP/1.1" 200 OK
+2025-11-24 11:14:15,465 - services.task_queue - INFO - Starting background processing for document: eac5e48c-a1bb-45dd-afb2-37c700a0e14c
+2025-11-24 11:14:17,091 - services.firestore_service - INFO - Updated document record: eac5e48c-a1bb-45dd-afb2-37c700a0e14c
+2025-11-24 11:14:18,879 - services.task_queue - INFO - Downloaded file from GCS: temp/eac5e48c-a1bb-45dd-afb2-37c700a0e14c/download (7).jpeg
+2025-11-24 11:14:18,880 - services.document_processor - INFO - Processing document: /var/folders/6g/wz0874x91c77jm2l71q28fgc0000gn/T/tmp0__f3917.jpeg
+2025-11-24 11:14:18,880 - services.document_processor - INFO - Attempting Anthropic OCR (attempt 1)...
+2025-11-24 11:14:18,880 - services.document_processor - INFO - Image path: /var/folders/6g/wz0874x91c77jm2l71q28fgc0000gn/T/tmp0__f3917.jpeg
+2025-11-24 11:14:18,880 - services.document_processor - INFO - Encoding file: /var/folders/6g/wz0874x91c77jm2l71q28fgc0000gn/T/tmp0__f3917.jpeg (size: 652463 bytes, type: .jpeg)
+2025-11-24 11:14:18,883 - services.document_processor - INFO - File encoded successfully: 869952 base64 characters
+2025-11-24 11:14:18,883 - services.document_processor - INFO - File extension: jpeg
+2025-11-24 11:14:18,884 - services.document_processor - INFO - Media type: image/jpeg
+2025-11-24 11:14:19,856 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 404 Not Found"
+2025-11-24 11:14:19,857 - services.document_processor - ERROR - OCR attempt 1 failed: Error code: 404 - {'type': 'error', 'error': {'type': 'not_found_error', 'message': 'model: claude-sonnet-4-20250529'}, 'request_id': 'req_011CVSJSLsXWT5T3W8b4GoMx'}
+2025-11-24 11:14:19,857 - services.document_processor - INFO - Retrying in 30 seconds...
+2025-11-24 11:14:49,863 - services.document_processor - INFO - Attempting Anthropic OCR (attempt 2)...
+2025-11-24 11:14:49,863 - services.document_processor - INFO - Image path: /var/folders/6g/wz0874x91c77jm2l71q28fgc0000gn/T/tmp0__f3917.jpeg
+2025-11-24 11:14:49,863 - services.document_processor - INFO - Encoding file: /var/folders/6g/wz0874x91c77jm2l71q28fgc0000gn/T/tmp0__f3917.jpeg (size: 652463 bytes, type: .jpeg)
+2025-11-24 11:14:49,865 - services.document_processor - INFO - File encoded successfully: 869952 base64 characters
+2025-11-24 11:14:49,866 - services.document_processor - INFO - File extension: jpeg
+2025-11-24 11:14:49,866 - services.document_processor - INFO - Media type: image/jpeg
+2025-11-24 11:14:50,771 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 404 Not Found"
+2025-11-24 11:14:50,772 - services.document_processor - ERROR - OCR attempt 2 failed: Error code: 404 - {'type': 'error', 'error': {'type': 'not_found_error', 'message': 'model: claude-sonnet-4-20250529'}, 'request_id': 'req_011CVSJUdEav63FLqmHKzFob'}
+2025-11-24 11:14:50,773 - services.document_processor - INFO - Retrying in 30 seconds...
+2025-11-24 11:15:20,778 - services.document_processor - INFO - Attempting Anthropic OCR (attempt 3)...
+2025-11-24 11:15:20,779 - services.document_processor - INFO - Image path: /var/folders/6g/wz0874x91c77jm2l71q28fgc0000gn/T/tmp0__f3917.jpeg
+2025-11-24 11:15:20,779 - services.document_processor - INFO - Encoding file: /var/folders/6g/wz0874x91c77jm2l71q28fgc0000gn/T/tmp0__f3917.jpeg (size: 652463 bytes, type: .jpeg)
+2025-11-24 11:15:20,784 - services.document_processor - INFO - File encoded successfully: 869952 base64 characters
+2025-11-24 11:15:20,784 - services.document_processor - INFO - File extension: jpeg
+2025-11-24 11:15:20,784 - services.document_processor - INFO - Media type: image/jpeg
+2025-11-24 11:15:21,748 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 404 Not Found"
+2025-11-24 11:15:21,749 - services.document_processor - ERROR - OCR attempt 3 failed: Error code: 404 - {'type': 'error', 'error': {'type': 'not_found_error', 'message': 'model: claude-sonnet-4-20250529'}, 'request_id': 'req_011CVSJWuAqrRUEqGqHYhxyZ'}
+2025-11-24 11:15:21,749 - services.document_processor - INFO - Retrying in 30 seconds...
+2025-11-24 11:15:51,751 - services.document_processor - INFO - Attempting Anthropic OCR (attempt 4)...
+2025-11-24 11:15:51,752 - services.document_processor - INFO - Image path: /var/folders/6g/wz0874x91c77jm2l71q28fgc0000gn/T/tmp0__f3917.jpeg
+2025-11-24 11:15:51,752 - services.document_processor - INFO - Encoding file: /var/folders/6g/wz0874x91c77jm2l71q28fgc0000gn/T/tmp0__f3917.jpeg (size: 652463 bytes, type: .jpeg)
+2025-11-24 11:15:51,753 - services.document_processor - INFO - File encoded successfully: 869952 base64 characters
+2025-11-24 11:15:51,753 - services.document_processor - INFO - File extension: jpeg
+2025-11-24 11:15:51,753 - services.document_processor - INFO - Media type: image/jpeg
+2025-11-24 11:15:52,534 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 404 Not Found"
+2025-11-24 11:15:52,538 - services.document_processor - ERROR - OCR attempt 4 failed: Error code: 404 - {'type': 'error', 'error': {'type': 'not_found_error', 'message': 'model: claude-sonnet-4-20250529'}, 'request_id': 'req_011CVSJZBMjWUGBPDqB7ND6G'}
+2025-11-24 11:15:52,538 - services.document_processor - ERROR - Error processing document: OCR_FAILED: Error code: 404 - {'type': 'error', 'error': {'type': 'not_found_error', 'message': 'model: claude-sonnet-4-20250529'}, 'request_id': 'req_011CVSJZBMjWUGBPDqB7ND6G'}
+2025-11-24 11:15:52,538 - services.task_queue - ERROR - Processing failed for document eac5e48c-a1bb-45dd-afb2-37c700a0e14c: OCR_FAILED: Error code: 404 - {'type': 'error', 'error': {'type': 'not_found_error', 'message': 'model: claude-sonnet-4-20250529'}, 'request_id': 'req_011CVSJZBMjWUGBPDqB7ND6G'}
+2025-11-24 11:15:53,097 - services.firestore_service - INFO - Updated document record: eac5e48c-a1bb-45dd-afb2-37c700a0e14c
+2025-11-24 11:15:53,674 - services.task_queue - INFO - Deleted temp file from GCS: temp/eac5e48c-a1bb-45dd-afb2-37c700a0e14c/download (7).jpeg
+2025-11-24 11:15:53,678 - services.task_queue - INFO - Cleaned up local temp file: /var/folders/6g/wz0874x91c77jm2l71q28fgc0000gn/T/tmp0__f3917.jpeg
+2025-11-24 11:15:53,678 - services.task_queue - INFO - Completed background processing for document: eac5e48c-a1bb-45dd-afb2-37c700a0e14c
