@@ -25,11 +25,14 @@ from models.schemas import (
     DocumentListResponse,
     DocumentSearchRequest,
     JobStatusResponse,
-    ErrorResponse
+    ErrorResponse,
+    CategoryStatsResponse,
+    CategoryStatsListResponse
 )
 from services.firestore_service import FirestoreService
 from services.task_queue import TaskQueue
 from services.document_processor import DocumentProcessor
+from services.category_mapper import map_backend_to_ui_category, get_all_ui_categories
 from gcs_service import GCSVoucherService
 from services.mocks import MockFirestoreService, MockGCSVoucherService
 
@@ -215,6 +218,9 @@ async def upload_document(
             document_type = 'Other'
             classification_confidence = 0.0
         
+        # Map backend classification to UI category
+        ui_category = map_backend_to_ui_category(document_type)
+        
         # Create document record in Firestore (non-critical if it fails)
         document_data = {
             'filename': file.filename,
@@ -227,6 +233,10 @@ async def upload_document(
             'document_type': document_type,
             'classification_confidence': classification_confidence,
             'extracted_data': extracted_data,
+            'metadata': {
+                'classification': document_type,
+                'ui_category': ui_category
+            },
             'created_at': datetime.now(),
             'updated_at': datetime.now()
         }
@@ -414,15 +424,25 @@ async def list_documents(
     page: int = Query(default=1, ge=1),
     page_size: int = Query(default=20, ge=1, le=100),
     classification: Optional[str] = None,
+    ui_category: Optional[str] = None,
     branch_id: Optional[str] = None
 ):
     """
     List processed documents with pagination
+    
+    Args:
+        page: Page number (starts at 1)
+        page_size: Number of documents per page
+        classification: Filter by backend classification
+        ui_category: Filter by UI category (Contracts, Invoices, etc.)
+        branch_id: Filter by branch ID
     """
     try:
         filters = {}
         if classification:
             filters['classification'] = classification
+        if ui_category:
+            filters['ui_category'] = ui_category
         if branch_id:
             filters['branch_id'] = branch_id
         
@@ -449,6 +469,7 @@ async def list_documents(
                     'document_date': metadata.get('document_date'),
                     'branch_id': metadata.get('branch_id'),
                     'classification': metadata.get('classification'),
+                    'ui_category': metadata.get('ui_category'),
                     'invoice_amount_usd': metadata.get('invoice_amount_usd'),
                     'invoice_amount_aed': metadata.get('invoice_amount_aed'),
                     'gold_weight': metadata.get('gold_weight'),
@@ -524,6 +545,7 @@ async def search_documents(
                     'document_date': metadata.get('document_date'),
                     'branch_id': metadata.get('branch_id'),
                     'classification': metadata.get('classification'),
+                    'ui_category': metadata.get('ui_category'),
                     'invoice_amount_usd': metadata.get('invoice_amount_usd'),
                     'invoice_amount_aed': metadata.get('invoice_amount_aed'),
                     'gold_weight': metadata.get('gold_weight'),
@@ -669,5 +691,37 @@ async def get_job_status(job_id: str):
         raise
     except Exception as e:
         logger.error(f"Error getting job status: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/categories/stats", response_model=CategoryStatsListResponse)
+async def get_category_statistics():
+    """
+    Get document count statistics by UI category
+    """
+    try:
+        stats = get_firestore_service().get_category_statistics()
+        total = stats.pop('total', 0)
+        
+        # Get all UI categories and create response
+        all_categories = get_all_ui_categories()
+        category_responses = []
+        
+        for category in all_categories:
+            if category == 'All':
+                continue  # Skip 'All' as it's not a real category
+            count = stats.get(category, 0)
+            category_responses.append(CategoryStatsResponse(
+                category=category,
+                count=count
+            ))
+        
+        return CategoryStatsListResponse(
+            categories=category_responses,
+            total_documents=total
+        )
+        
+    except Exception as e:
+        logger.error(f"Error getting category statistics: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 

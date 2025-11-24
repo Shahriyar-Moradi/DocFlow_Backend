@@ -38,6 +38,7 @@ class DocumentMetadata(BaseModel):
     document_date: Optional[str] = None
     branch_id: Optional[str] = None
     classification: Optional[str] = None
+    ui_category: Optional[str] = None  # UI category mapped from classification
     invoice_amount_usd: Optional[str] = None
     invoice_amount_aed: Optional[str] = None
     gold_weight: Optional[str] = None
@@ -141,4 +142,16 @@ class FlowListResponse(BaseModel):
     page_size: int
     has_next: bool
     has_previous: bool
+
+
+class CategoryStatsResponse(BaseModel):
+    """Category statistics response"""
+    category: str
+    count: int
+
+
+class CategoryStatsListResponse(BaseModel):
+    """List of category statistics"""
+    categories: List[CategoryStatsResponse]
+    total_documents: int
 

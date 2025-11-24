@@ -85,6 +85,8 @@ class FirestoreService:
             if filters:
                 if filters.get('classification'):
                     query = query.where('metadata.classification', '==', filters['classification'])
+                if filters.get('ui_category'):
+                    query = query.where('metadata.ui_category', '==', filters['ui_category'])
                 if filters.get('branch_id'):
                     query = query.where('metadata.branch_id', '==', filters['branch_id'])
                 if filters.get('date_from'):
@@ -368,4 +370,27 @@ class FirestoreService:
         except Exception as e:
             logger.error(f"Failed to get documents by flow_id: {e}")
             return [], 0
+    
+    def get_category_statistics(self) -> Dict[str, int]:
+        """Get document count by UI category"""
+        try:
+            # Get all documents
+            docs = self.documents_collection.stream()
+            
+            category_counts: Dict[str, int] = {}
+            total = 0
+            
+            for doc in docs:
+                total += 1
+                data = doc.to_dict()
+                metadata = data.get('metadata', {})
+                ui_category = metadata.get('ui_category', 'Unknown')
+                category_counts[ui_category] = category_counts.get(ui_category, 0) + 1
+            
+            # Ensure all categories are present (even with 0 count)
+            category_counts['total'] = total
+            return category_counts
+        except Exception as e:
+            logger.error(f"Failed to get category statistics: {e}")
+            return {'total': 0}
 

@@ -16,6 +16,7 @@ sys.path.append(str(Path(__file__).parent.parent))
 from config import settings
 from services.document_processor import DocumentProcessor
 from services.firestore_service import FirestoreService
+from services.category_mapper import map_backend_to_ui_category
 from gcs_service import GCSVoucherService
 from services.mocks import MockFirestoreService, MockGCSVoucherService
 
@@ -173,6 +174,10 @@ class TaskQueue:
                         
                         logger.info(f"Uploaded file to organized location: {organized_key}")
                         
+                        # Map backend classification to UI category
+                        backend_classification = result.get('classification')
+                        ui_category = map_backend_to_ui_category(backend_classification)
+                        
                         # Update Firestore with success
                         self.firestore_service.update_document(document_id, {
                             'processing_status': 'completed',
@@ -182,7 +187,8 @@ class TaskQueue:
                                 'document_no': result.get('document_no'),
                                 'document_date': result.get('document_date'),
                                 'branch_id': result.get('branch_id'),
-                                'classification': result.get('classification'),
+                                'classification': backend_classification,
+                                'ui_category': ui_category,
                                 'invoice_amount_usd': result.get('invoice_amount_usd'),
                                 'invoice_amount_aed': result.get('invoice_amount_aed'),
                                 'gold_weight': result.get('gold_weight'),
