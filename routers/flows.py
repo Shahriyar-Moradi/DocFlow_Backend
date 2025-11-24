@@ -25,7 +25,7 @@ from services.mocks import MockFirestoreService
 
 logger = logging.getLogger(__name__)
 
-router = APIRouter(tags=["flows"])
+router = APIRouter(prefix="/flows", tags=["flows"])
 
 # Initialize services
 firestore_service = None

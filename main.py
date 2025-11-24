@@ -44,7 +44,7 @@ app.add_middleware(
 
 # Include routers
 app.include_router(documents.router, prefix=settings.API_V1_PREFIX)
-app.include_router(flows.router, prefix=f"{settings.API_V1_PREFIX}/flows")
+app.include_router(flows.router, prefix=settings.API_V1_PREFIX)
 
 
 @app.get("/", response_model=HealthResponse)
