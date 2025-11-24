@@ -462,6 +462,13 @@ async def list_documents(
         document_responses = []
         for doc in documents:
             metadata = doc.get('metadata', {})
+            
+            # Ensure ui_category is always set (compute from classification if missing)
+            ui_category = metadata.get('ui_category')
+            if not ui_category:
+                classification = metadata.get('classification') or doc.get('document_type') or doc.get('classification')
+                ui_category = map_backend_to_ui_category(classification)
+            
             document_responses.append(DocumentResponse(
                 document_id=doc.get('document_id'),
                 filename=doc.get('filename', ''),
@@ -475,7 +482,7 @@ async def list_documents(
                     'document_date': metadata.get('document_date'),
                     'branch_id': metadata.get('branch_id'),
                     'classification': metadata.get('classification'),
-                    'ui_category': metadata.get('ui_category'),
+                    'ui_category': ui_category,  # Always include computed ui_category
                     'invoice_amount_usd': metadata.get('invoice_amount_usd'),
                     'invoice_amount_aed': metadata.get('invoice_amount_aed'),
                     'gold_weight': metadata.get('gold_weight'),

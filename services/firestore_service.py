@@ -79,14 +79,18 @@ class FirestoreService:
     ) -> tuple[List[Dict[str, Any]], int]:
         """List documents with pagination and optional filters"""
         try:
+            from services.category_mapper import map_backend_to_ui_category
+            
             query = self.documents_collection
             
-            # Apply filters
+            # Apply filters (except ui_category for now - we'll filter in memory)
+            ui_category_filter = None
             if filters:
                 if filters.get('classification'):
                     query = query.where('metadata.classification', '==', filters['classification'])
                 if filters.get('ui_category'):
-                    query = query.where('metadata.ui_category', '==', filters['ui_category'])
+                    # Store ui_category filter to apply after fetching (to handle missing ui_category)
+                    ui_category_filter = filters['ui_category']
                 if filters.get('branch_id'):
                     query = query.where('metadata.branch_id', '==', filters['branch_id'])
                 if filters.get('date_from'):
@@ -96,25 +100,88 @@ class FirestoreService:
                 if filters.get('flow_id'):
                     query = query.where('flow_id', '==', filters['flow_id'])
             
-            # Order by created_at descending
-            query = query.order_by('created_at', direction=Query.DESCENDING)
+            # Fetch all documents first (we'll filter ui_category in memory and sort/paginate after)
+            # Note: We don't order here if ui_category filter is active, to avoid index issues
+            if not ui_category_filter:
+                # Only order if no ui_category filter (to avoid Firestore index requirements)
+                query = query.order_by('created_at', direction=Query.DESCENDING)
             
-            # Get total count (before pagination)
-            total = len(list(query.stream()))
+            all_docs = list(query.stream())
+            
+            # Apply ui_category filter in memory (to handle documents without ui_category set)
+            if ui_category_filter:
+                filtered_docs = []
+                for doc in all_docs:
+                    data = doc.to_dict()
+                    metadata = data.get('metadata', {})
+                    
+                    # Get ui_category from metadata or compute from classification
+                    ui_category = metadata.get('ui_category')
+                    if not ui_category:
+                        # Compute from classification if not set
+                        classification = metadata.get('classification') or data.get('document_type') or data.get('classification')
+                        ui_category = map_backend_to_ui_category(classification)
+                    
+                    # Update metadata if ui_category was computed (for consistency)
+                    if not metadata.get('ui_category') and ui_category:
+                        metadata['ui_category'] = ui_category
+                        data['metadata'] = metadata
+                        # Optionally update in Firestore (async, non-blocking)
+                        try:
+                            self.update_document(doc.id, {'metadata': metadata})
+                        except:
+                            pass  # Non-critical update
+                    
+                    # Filter by ui_category
+                    if ui_category == ui_category_filter:
+                        data['document_id'] = doc.id
+                        filtered_docs.append(data)
+                
+                all_docs_list = filtered_docs
+                total = len(filtered_docs)
+            else:
+                # No ui_category filter, use all documents
+                all_docs_list = []
+                for doc in all_docs:
+                    data = doc.to_dict()
+                    data['document_id'] = doc.id
+                    
+                    # Ensure ui_category is set even when not filtering
+                    metadata = data.get('metadata', {})
+                    if not metadata.get('ui_category'):
+                        classification = metadata.get('classification') or data.get('document_type') or data.get('classification')
+                        ui_category = map_backend_to_ui_category(classification)
+                        metadata['ui_category'] = ui_category
+                        data['metadata'] = metadata
+                    
+                    all_docs_list.append(data)
+                
+                total = len(all_docs_list)
+            
+            # Sort by created_at (newest first) - ensure all documents are sorted
+            # Convert datetime strings to datetime objects for proper sorting
+            def get_sort_key(d):
+                created_at = d.get('created_at')
+                if isinstance(created_at, datetime):
+                    return created_at
+                elif isinstance(created_at, str):
+                    try:
+                        return datetime.fromisoformat(created_at.replace('Z', '+00:00'))
+                    except:
+                        return datetime.min
+                return datetime.min
+            
+            all_docs_list.sort(key=get_sort_key, reverse=True)
             
             # Apply pagination
             offset = (page - 1) * page_size
-            docs = query.offset(offset).limit(page_size).stream()
-            
-            documents = []
-            for doc in docs:
-                data = doc.to_dict()
-                data['document_id'] = doc.id
-                documents.append(data)
+            documents = all_docs_list[offset:offset + page_size]
             
             return documents, total
         except Exception as e:
             logger.error(f"Failed to list documents: {e}")
+            import traceback
+            logger.error(traceback.format_exc())
             return [], 0
     
     def search_documents(self, search_params: Dict[str, Any]) -> tuple[List[Dict[str, Any]], int]:
