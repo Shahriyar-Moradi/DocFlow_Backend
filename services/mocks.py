@@ -15,6 +15,7 @@ class MockFirestoreService:
     def __init__(self):
         self.documents = {}
         self.jobs = {}
+        self.flows = {}
         logger.info("Initialized Mock Firestore Service")
         
     def create_document(self, document_id: str, data: Dict[str, Any]) -> str:
@@ -44,6 +45,11 @@ class MockFirestoreService:
         # Add IDs
         for i, doc_id in enumerate(self.documents.keys()):
             docs[i]['document_id'] = doc_id
+        
+        # Apply filters
+        if filters:
+            if filters.get('flow_id'):
+                docs = [doc for doc in docs if doc.get('flow_id') == filters['flow_id']]
             
         # Sort by created_at desc
         docs.sort(key=lambda x: x.get('created_at', datetime.min), reverse=True)
@@ -87,6 +93,90 @@ class MockFirestoreService:
             job['updated_at'] = datetime.now()
             return True
         return False
+    
+    # Flow Operations
+    
+    def create_flow(self, flow_id: str, data: Dict[str, Any]) -> str:
+        """Create a new flow"""
+        data['created_at'] = datetime.now()
+        data['updated_at'] = datetime.now()
+        data['document_count'] = data.get('document_count', 0)
+        self.flows[flow_id] = data
+        logger.info(f"Mock: Created flow {flow_id}")
+        return flow_id
+    
+    def get_flow(self, flow_id: str) -> Optional[Dict[str, Any]]:
+        """Get a flow by ID"""
+        flow = self.flows.get(flow_id)
+        if flow:
+            ret = flow.copy()
+            ret['flow_id'] = flow_id
+            return ret
+        return None
+    
+    def list_flows(
+        self,
+        page: int = 1,
+        page_size: int = 20
+    ) -> tuple[List[Dict[str, Any]], int]:
+        """List flows with pagination"""
+        flows = list(self.flows.values())
+        # Add IDs
+        for i, flow_id in enumerate(self.flows.keys()):
+            flows[i]['flow_id'] = flow_id
+        
+        # Sort by created_at desc
+        flows.sort(key=lambda x: x.get('created_at', datetime.min), reverse=True)
+        
+        total = len(flows)
+        start = (page - 1) * page_size
+        end = start + page_size
+        
+        return flows[start:end], total
+    
+    def update_flow(self, flow_id: str, data: Dict[str, Any]) -> bool:
+        """Update a flow record"""
+        if flow_id in self.flows:
+            self.flows[flow_id].update(data)
+            self.flows[flow_id]['updated_at'] = datetime.now()
+            logger.info(f"Mock: Updated flow {flow_id}")
+            return True
+        return False
+    
+    def increment_flow_document_count(self, flow_id: str, increment: int = 1) -> bool:
+        """Increment the document count for a flow"""
+        if flow_id in self.flows:
+            current_count = self.flows[flow_id].get('document_count', 0)
+            self.flows[flow_id]['document_count'] = current_count + increment
+            self.flows[flow_id]['updated_at'] = datetime.now()
+            logger.info(f"Mock: Incremented document count for flow {flow_id} by {increment}")
+            return True
+        logger.warning(f"Mock: Flow {flow_id} not found for document count increment")
+        return False
+    
+    def get_documents_by_flow_id(
+        self,
+        flow_id: str,
+        page: int = 1,
+        page_size: int = 20
+    ) -> tuple[List[Dict[str, Any]], int]:
+        """Get documents by flow_id with pagination"""
+        # Filter documents by flow_id and add document_id
+        docs = []
+        for doc_id, doc in self.documents.items():
+            if doc.get('flow_id') == flow_id:
+                doc_copy = doc.copy()
+                doc_copy['document_id'] = doc_id
+                docs.append(doc_copy)
+        
+        # Sort by created_at desc
+        docs.sort(key=lambda x: x.get('created_at', datetime.min), reverse=True)
+        
+        total = len(docs)
+        start = (page - 1) * page_size
+        end = start + page_size
+        
+        return docs[start:end], total
 
 
 class MockGCSVoucherService:
