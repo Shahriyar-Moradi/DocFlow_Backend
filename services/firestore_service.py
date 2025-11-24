@@ -348,25 +348,60 @@ class FirestoreService:
     ) -> tuple[List[Dict[str, Any]], int]:
         """Get documents by flow_id with pagination"""
         try:
-            query = self.documents_collection.where('flow_id', '==', flow_id)
-            
-            # Order by created_at descending
-            query = query.order_by('created_at', direction=Query.DESCENDING)
-            
-            # Get total count (before pagination)
-            total = len(list(query.stream()))
-            
-            # Apply pagination
-            offset = (page - 1) * page_size
-            docs = query.offset(offset).limit(page_size).stream()
-            
-            documents = []
-            for doc in docs:
-                data = doc.to_dict()
-                data['document_id'] = doc.id
-                documents.append(data)
-            
-            return documents, total
+            # Try with index-based query first (requires composite index)
+            try:
+                query = self.documents_collection.where('flow_id', '==', flow_id)
+                query = query.order_by('created_at', direction=Query.DESCENDING)
+                
+                # Get total count (before pagination)
+                all_docs = list(query.stream())
+                total = len(all_docs)
+                
+                # Apply pagination in memory since we already fetched for count
+                offset = (page - 1) * page_size
+                paginated_docs = all_docs[offset:offset + page_size]
+                
+                documents = []
+                for doc in paginated_docs:
+                    data = doc.to_dict()
+                    data['document_id'] = doc.id
+                    documents.append(data)
+                
+                return documents, total
+                
+            except Exception as index_error:
+                # If index doesn't exist, fall back to client-side sorting
+                if "index" in str(index_error).lower():
+                    logger.warning(f"Composite index not available, using client-side sorting. Create index at Firebase Console for better performance.")
+                    logger.info("Falling back to client-side sorting...")
+                    
+                    # Fetch all documents with flow_id (no ordering)
+                    query = self.documents_collection.where('flow_id', '==', flow_id)
+                    docs = list(query.stream())
+                    
+                    # Convert to list with data
+                    all_documents = []
+                    for doc in docs:
+                        data = doc.to_dict()
+                        data['document_id'] = doc.id
+                        all_documents.append(data)
+                    
+                    # Sort by created_at in memory
+                    all_documents.sort(
+                        key=lambda x: x.get('created_at', datetime.min),
+                        reverse=True
+                    )
+                    
+                    total = len(all_documents)
+                    
+                    # Apply pagination
+                    offset = (page - 1) * page_size
+                    documents = all_documents[offset:offset + page_size]
+                    
+                    return documents, total
+                else:
+                    raise
+                    
         except Exception as e:
             logger.error(f"Failed to get documents by flow_id: {e}")
             return [], 0

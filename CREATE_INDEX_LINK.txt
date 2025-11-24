@@ -1,0 +1,38 @@
+QUICK FIX: Create Firestore Index via Console
+==============================================
+
+The easiest way to fix the index error is to click this link:
+
+https://console.firebase.google.com/v1/r/project/rocasoft/firestore/indexes?create_composite=Ckpwcm9qZWN0cy9yb2Nhc29mdC9kYXRhYmFzZXMvKGRlZmF1bHQpL2NvbGxlY3Rpb25Hcm91cHMvZG9jdW1lbnRzL2luZGV4ZXMvXxABGgsKB2Zsb3dfaWQQARoOCgpjcmVhdGVkX2F0EAIaDAoIX19uYW1lX18QAg
+
+This will:
+1. Open Firebase Console
+2. Pre-fill the index configuration
+3. You just click "Create Index"
+4. Wait 2-5 minutes for the index to build
+5. Done!
+
+NOTE: Your app already works without the index (using fallback), but creating 
+the index will make it much faster, especially with many documents.
+
+---
+
+Alternative: Install Firebase CLI Manually
+==========================================
+
+If you want to use Firebase CLI for future deployments:
+
+1. Fix npm permissions (if needed):
+   sudo chown -R $(whoami) ~/.nvm
+
+2. Install Firebase CLI:
+   npm install -g firebase-tools
+
+3. Login to Firebase:
+   firebase login
+
+4. Deploy indexes:
+   firebase deploy --only firestore:indexes
+
+But the console link above is much quicker for now!
+

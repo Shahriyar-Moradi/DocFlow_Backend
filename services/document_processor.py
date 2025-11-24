@@ -76,14 +76,99 @@ class DocumentProcessor:
             9: "sep", 10: "oct", 11: "nov", 12: "dec"
         }
     
-    def _encode_image_to_base64(self, image_path: str) -> str:
-        """Encode image or PDF to base64 with validation"""
+    def _detect_image_format(self, image_path: str) -> str:
+        """Detect actual image format from file content (magic bytes)"""
+        with open(image_path, "rb") as f:
+            header = f.read(16)
+        
+        # Check magic bytes
+        if header.startswith(b'\xff\xd8\xff'):
+            return 'jpeg'
+        elif header.startswith(b'\x89PNG\r\n\x1a\n'):
+            return 'png'
+        elif header.startswith(b'%PDF'):
+            return 'pdf'
+        elif header.startswith(b'GIF87a') or header.startswith(b'GIF89a'):
+            return 'gif'
+        elif header.startswith(b'RIFF') and header[8:12] == b'WEBP':
+            return 'webp'
+        else:
+            logger.warning(f"Unknown image format for: {image_path}")
+            return 'unknown'
+    
+    def _normalize_image_format(self, image_path: str) -> tuple[str, str]:
+        """
+        Ensure image format matches its extension by converting if needed.
+        Returns: (normalized_path, actual_format)
+        """
+        if not PIL_AVAILABLE:
+            # Without PIL, we can't convert - just detect and warn
+            actual_format = self._detect_image_format(image_path)
+            logger.warning(f"PIL not available - cannot convert format. Actual format: {actual_format}")
+            return image_path, actual_format
+        
+        try:
+            actual_format = self._detect_image_format(image_path)
+            file_ext = os.path.splitext(image_path)[1].lower().lstrip('.')
+            
+            # If format matches extension, no conversion needed
+            if (actual_format == 'jpeg' and file_ext in ['jpg', 'jpeg']) or \
+               (actual_format == file_ext):
+                logger.info(f"Image format matches extension: {actual_format}")
+                return image_path, actual_format
+            
+            # Format mismatch - need to convert
+            logger.warning(f"Format mismatch detected: file is {actual_format} but extension is .{file_ext}")
+            
+            if actual_format == 'pdf':
+                # Don't convert PDFs
+                return image_path, 'pdf'
+            
+            # Convert image to match its extension or to PNG as default
+            target_format = file_ext if file_ext in ['png', 'jpg', 'jpeg'] else 'png'
+            
+            # Open image with PIL
+            img = Image.open(image_path)
+            
+            # Convert RGBA to RGB for JPEG
+            if target_format in ['jpg', 'jpeg'] and img.mode in ['RGBA', 'LA', 'P']:
+                logger.info(f"Converting {img.mode} to RGB for JPEG")
+                rgb_img = Image.new('RGB', img.size, (255, 255, 255))
+                if img.mode == 'P':
+                    img = img.convert('RGBA')
+                rgb_img.paste(img, mask=img.split()[-1] if img.mode in ['RGBA', 'LA'] else None)
+                img = rgb_img
+            
+            # Create new filename with correct format
+            base_path = os.path.splitext(image_path)[0]
+            if target_format in ['jpg', 'jpeg']:
+                new_path = base_path + '_converted.jpg'
+                img.save(new_path, 'JPEG', quality=95)
+                logger.info(f"Converted to JPEG: {new_path}")
+                return new_path, 'jpeg'
+            else:
+                new_path = base_path + '_converted.png'
+                img.save(new_path, 'PNG')
+                logger.info(f"Converted to PNG: {new_path}")
+                return new_path, 'png'
+                
+        except Exception as e:
+            logger.error(f"Error normalizing image format: {e}")
+            # Return original path and detected format
+            actual_format = self._detect_image_format(image_path)
+            return image_path, actual_format
+    
+    def _encode_image_to_base64(self, image_path: str) -> tuple[str, str]:
+        """
+        Encode image or PDF to base64 with validation and format detection.
+        Returns: (base64_data, media_type)
+        """
         if not os.path.exists(image_path):
             raise FileNotFoundError(f"Image file not found: {image_path}")
         
         file_size = os.path.getsize(image_path)
         file_ext = os.path.splitext(image_path)[1].lower()
-        logger.info(f"Encoding file: {image_path} (size: {file_size} bytes, type: {file_ext})")
+        logger.info(f"Encoding file: {image_path} (size: {file_size} bytes, extension: {file_ext})")
         
         if file_size == 0:
             raise ValueError(f"File is empty: {image_path}")
@@ -91,14 +176,44 @@ class DocumentProcessor:
         if file_size > 10 * 1024 * 1024:  # 10MB
             logger.warning(f"Large file ({file_size / 1024 / 1024:.1f}MB)")
         
-        with open(image_path, "rb") as image_file:
+        # Normalize image format to match extension
+        normalized_path, actual_format = self._normalize_image_format(image_path)
+        
+        # Determine correct media type based on actual format
+        if actual_format == 'jpeg':
+            media_type = "image/jpeg"
+        elif actual_format == 'png':
+            media_type = "image/png"
+        elif actual_format == 'pdf':
+            media_type = "application/pdf"
+        elif actual_format == 'gif':
+            media_type = "image/gif"
+        elif actual_format == 'webp':
+            media_type = "image/webp"
+        else:
+            # Default to PNG for unknown formats
+            media_type = "image/png"
+            logger.warning(f"Unknown format, defaulting to image/png")
+        
+        logger.info(f"Using media type: {media_type} for format: {actual_format}")
+        
+        with open(normalized_path, "rb") as image_file:
             image_data = image_file.read()
             if not image_data:
-                raise ValueError(f"Failed to read file data from: {image_path}")
+                raise ValueError(f"Failed to read file data from: {normalized_path}")
             
             encoded = base64.b64encode(image_data).decode('utf-8')
             logger.info(f"File encoded successfully: {len(encoded)} base64 characters")
-            return encoded
+            
+            # Clean up converted file if it's different from original
+            if normalized_path != image_path and os.path.exists(normalized_path):
+                try:
+                    os.remove(normalized_path)
+                    logger.info(f"Cleaned up converted file: {normalized_path}")
+                except:
+                    pass
+            
+            return encoded, media_type
     
     def _parse_document_date(self, date_str: Optional[str]) -> tuple[int, int, int]:
         """Parse document date and return year, month, day components"""
@@ -249,18 +364,8 @@ class DocumentProcessor:
                 if not os.path.exists(image_path):
                     raise FileNotFoundError(f"Image file does not exist: {image_path}")
                 
-                base64_image = self._encode_image_to_base64(image_path)
-                
-                # Determine media type
-                file_extension = os.path.splitext(image_path)[1].lower().lstrip('.')
-                if file_extension in ['jpg', 'jpeg']:
-                    media_type = "image/jpeg"
-                elif file_extension == 'png':
-                    media_type = "image/png"
-                elif file_extension == 'pdf':
-                    media_type = "application/pdf"
-                else:
-                    media_type = "image/png"
+                # Encode and get correct media type based on actual file content
+                base64_image, media_type = self._encode_image_to_base64(image_path)
                 
                 doc_content_type = "document" if media_type == "application/pdf" else "image"
                 
@@ -387,18 +492,8 @@ Be specific and accurate. If uncertain, use lower confidence scores.'''
                 if not os.path.exists(image_path):
                     raise FileNotFoundError(f"Image file does not exist: {image_path}")
                 
-                base64_image = self._encode_image_to_base64(image_path)
-                
-                # Determine media type
-                file_extension = os.path.splitext(image_path)[1].lower().lstrip('.')
-                if file_extension in ['jpg', 'jpeg']:
-                    media_type = "image/jpeg"
-                elif file_extension == 'png':
-                    media_type = "image/png"
-                elif file_extension == 'pdf':
-                    media_type = "application/pdf"
-                else:
-                    media_type = "image/png"
+                # Encode and get correct media type based on actual file content
+                base64_image, media_type = self._encode_image_to_base64(image_path)
                 
                 doc_content_type = "document" if media_type == "application/pdf" else "image"
                 doc_or_image_text = "document" if media_type == "application/pdf" else "image"
@@ -533,21 +628,8 @@ Adapt the extraction based on the document type ({document_type}). Be thorough a
                 if not os.path.exists(image_path):
                     raise FileNotFoundError(f"Image file does not exist: {image_path}")
                 
-                base64_image = self._encode_image_to_base64(image_path)
-                
-                # Determine media type
-                file_extension = os.path.splitext(image_path)[1].lower().lstrip('.')
-                logger.info(f"File extension: {file_extension}")
-                
-                if file_extension in ['jpg', 'jpeg']:
-                    media_type = "image/jpeg"
-                elif file_extension == 'png':
-                    media_type = "image/png"
-                elif file_extension == 'pdf':
-                    media_type = "application/pdf"
-                    logger.info("Using PDF media type for direct processing")
-                else:
-                    media_type = "image/png"
+                # Encode and get correct media type based on actual file content
+                base64_image, media_type = self._encode_image_to_base64(image_path)
                 
                 logger.info(f"Media type: {media_type}")
                 
