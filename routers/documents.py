@@ -12,7 +12,7 @@ from datetime import datetime
 from typing import List, Optional
 from pathlib import Path
 
-from fastapi import APIRouter, UploadFile, File, HTTPException, BackgroundTasks, Query, Depends
+from fastapi import APIRouter, UploadFile, File, Form, HTTPException, BackgroundTasks, Query, Depends
 from fastapi.responses import StreamingResponse
 
 sys.path.append(str(Path(__file__).parent.parent))
@@ -94,7 +94,7 @@ def validate_file_extension(filename: str) -> bool:
 async def upload_document(
     background_tasks: BackgroundTasks,
     file: UploadFile = File(...),
-    flow_id: Optional[str] = None
+    flow_id: Optional[str] = Form(None)
 ):
     """
     Upload a single document for processing
@@ -292,7 +292,7 @@ async def upload_document(
 async def upload_documents_batch(
     background_tasks: BackgroundTasks,
     files: List[UploadFile] = File(...),
-    flow_id: Optional[str] = None
+    flow_id: Optional[str] = Form(None)
 ):
     """
     Upload multiple documents for batch processing
