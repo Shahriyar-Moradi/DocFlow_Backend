@@ -63,6 +63,7 @@ class DocumentResponse(BaseModel):
     created_at: datetime
     updated_at: datetime
     error: Optional[str] = None
+    flow_id: Optional[str] = None
 
 
 class DocumentListResponse(BaseModel):
@@ -117,4 +118,27 @@ class HealthResponse(BaseModel):
     version: str
     timestamp: datetime = Field(default_factory=datetime.now)
     services: Dict[str, bool]
+
+
+class FlowCreateRequest(BaseModel):
+    """Request to create a new flow"""
+    flow_name: str = Field(..., min_length=1, max_length=200)
+
+
+class FlowResponse(BaseModel):
+    """Flow response model"""
+    flow_id: str
+    flow_name: str
+    created_at: datetime
+    document_count: int = 0
+
+
+class FlowListResponse(BaseModel):
+    """Paginated flow list response"""
+    flows: List[FlowResponse]
+    total: int
+    page: int
+    page_size: int
+    has_next: bool
+    has_previous: bool
 

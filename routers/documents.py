@@ -90,7 +90,8 @@ def validate_file_extension(filename: str) -> bool:
 @router.post("/upload", response_model=DocumentUploadResponse)
 async def upload_document(
     background_tasks: BackgroundTasks,
-    file: UploadFile = File(...)
+    file: UploadFile = File(...),
+    flow_id: Optional[str] = None
 ):
     """
     Upload a single document for processing
@@ -215,24 +216,38 @@ async def upload_document(
             classification_confidence = 0.0
         
         # Create document record in Firestore (non-critical if it fails)
+        document_data = {
+            'filename': file.filename,
+            'original_filename': file.filename,
+            'file_type': Path(file.filename).suffix.lower(),
+            'file_size': len(file_content),
+            'gcs_path': upload_result.get('gcs_path'),
+            'gcs_temp_path': gcs_temp_path,
+            'processing_status': 'processing',  # Changed to processing since we did quick processing
+            'document_type': document_type,
+            'classification_confidence': classification_confidence,
+            'extracted_data': extracted_data,
+            'created_at': datetime.now(),
+            'updated_at': datetime.now()
+        }
+        
+        # Add flow_id if provided
+        if flow_id:
+            document_data['flow_id'] = flow_id
+        
         safe_firestore_operation(
             get_firestore_service().create_document,
             document_id,
-            {
-                'filename': file.filename,
-                'original_filename': file.filename,
-                'file_type': Path(file.filename).suffix.lower(),
-                'file_size': len(file_content),
-                'gcs_path': upload_result.get('gcs_path'),
-                'gcs_temp_path': gcs_temp_path,
-                'processing_status': 'processing',  # Changed to processing since we did quick processing
-                'document_type': document_type,
-                'classification_confidence': classification_confidence,
-                'extracted_data': extracted_data,
-                'created_at': datetime.now(),
-                'updated_at': datetime.now()
-            }
+            document_data
         )
+        
+        # Increment flow document count if flow_id is provided
+        if flow_id:
+            safe_firestore_operation(
+                get_firestore_service().increment_flow_document_count,
+                flow_id,
+                1
+            )
         
         # Add background processing task for full processing (organized path, PDF conversion, etc.)
         task_queue.add_process_task(
@@ -266,7 +281,8 @@ async def upload_document(
 @router.post("/upload/batch", response_model=BatchUploadResponse)
 async def upload_documents_batch(
     background_tasks: BackgroundTasks,
-    files: List[UploadFile] = File(...)
+    files: List[UploadFile] = File(...),
+    flow_id: Optional[str] = None
 ):
     """
     Upload multiple documents for batch processing
@@ -331,21 +347,27 @@ async def upload_documents_batch(
                 continue
             
             # Create document record (non-critical if it fails)
+            document_data = {
+                'filename': file.filename,
+                'original_filename': file.filename,
+                'file_type': Path(file.filename).suffix.lower(),
+                'file_size': len(file_content),
+                'gcs_path': upload_result.get('gcs_path'),
+                'gcs_temp_path': gcs_temp_path,
+                'processing_status': 'pending',
+                'job_id': job_id,
+                'created_at': datetime.now(),
+                'updated_at': datetime.now()
+            }
+            
+            # Add flow_id if provided
+            if flow_id:
+                document_data['flow_id'] = flow_id
+            
             safe_firestore_operation(
                 get_firestore_service().create_document,
                 document_id,
-                {
-                    'filename': file.filename,
-                    'original_filename': file.filename,
-                    'file_type': Path(file.filename).suffix.lower(),
-                    'file_size': len(file_content),
-                    'gcs_path': upload_result.get('gcs_path'),
-                    'gcs_temp_path': gcs_temp_path,
-                    'processing_status': 'pending',
-                    'job_id': job_id,
-                    'created_at': datetime.now(),
-                    'updated_at': datetime.now()
-                }
+                document_data
             )
             
             # Add background processing task
@@ -363,6 +385,14 @@ async def upload_documents_batch(
             job_id,
             {'documents': document_ids}
         )
+        
+        # Increment flow document count if flow_id is provided
+        if flow_id and len(document_ids) > 0:
+            safe_firestore_operation(
+                get_firestore_service().increment_flow_document_count,
+                flow_id,
+                len(document_ids)
+            )
         
         return BatchUploadResponse(
             job_id=job_id,
@@ -432,7 +462,8 @@ async def list_documents(
                 confidence=doc.get('confidence'),
                 created_at=doc.get('created_at', datetime.now()),
                 updated_at=doc.get('updated_at', datetime.now()),
-                error=doc.get('error')
+                error=doc.get('error'),
+                flow_id=doc.get('flow_id')
             ))
         
         return DocumentListResponse(
@@ -506,7 +537,8 @@ async def search_documents(
                 confidence=doc.get('confidence'),
                 created_at=doc.get('created_at', datetime.now()),
                 updated_at=doc.get('updated_at', datetime.now()),
-                error=doc.get('error')
+                error=doc.get('error'),
+                flow_id=doc.get('flow_id')
             ))
         
         return DocumentListResponse(

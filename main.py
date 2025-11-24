@@ -15,7 +15,7 @@ from datetime import datetime
 sys.path.append(str(Path(__file__).parent))
 
 from config import settings
-from routers import documents
+from routers import documents, flows
 from models.schemas import HealthResponse, ErrorResponse
 
 # Configure logging
@@ -32,17 +32,19 @@ app = FastAPI(
     description="Document Automation System - AI-powered document classification and OCR"
 )
 
-# Configure CORS
+# Configure CORS - Allow all origins for mobile apps
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.CORS_ORIGINS,
-    allow_credentials=True,
+    allow_origins=["*"],  # Allow all origins for mobile apps
+    allow_credentials=False,  # Must be False when allow_origins is ["*"]
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["*"],
 )
 
 # Include routers
 app.include_router(documents.router, prefix=settings.API_V1_PREFIX)
+app.include_router(flows.router, prefix=f"{settings.API_V1_PREFIX}/flows")
 
 
 @app.get("/", response_model=HealthResponse)

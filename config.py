@@ -35,6 +35,7 @@ class Settings:
     FIRESTORE_PROJECT_ID: str = os.getenv("FIRESTORE_PROJECT_ID", "rocasoft")
     FIRESTORE_COLLECTION_DOCUMENTS: str = "documents"
     FIRESTORE_COLLECTION_JOBS: str = "processing_jobs"
+    FIRESTORE_COLLECTION_FLOWS: str = "flows"
     
     # File Upload Configuration
     MAX_UPLOAD_SIZE: int = 10 * 1024 * 1024  # 10MB
@@ -47,9 +48,10 @@ class Settings:
     OCR_RETRY_DELAY: int = 15  # seconds (reduced from 30 for faster retries)
     
     # CORS Configuration
+    # Allow origins for web, mobile, and Capacitor apps
     CORS_ORIGINS: list = os.getenv(
         "CORS_ORIGINS",
-        "http://localhost:3000,http://localhost:8080,http://localhost:4200"
+        "http://localhost:3000,http://localhost:8080,http://localhost:4200,capacitor://localhost,ionic://localhost,http://localhost,https://localhost"
     ).split(",")
     
     # Server Configuration

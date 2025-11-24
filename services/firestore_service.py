@@ -24,6 +24,7 @@ class FirestoreService:
             self.db = firestore.Client(project=settings.FIRESTORE_PROJECT_ID)
             self.documents_collection = self.db.collection(settings.FIRESTORE_COLLECTION_DOCUMENTS)
             self.jobs_collection = self.db.collection(settings.FIRESTORE_COLLECTION_JOBS)
+            self.flows_collection = self.db.collection(settings.FIRESTORE_COLLECTION_FLOWS)
             logger.info(f"Firestore client initialized for project: {settings.FIRESTORE_PROJECT_ID}")
         except Exception as e:
             logger.error(f"Failed to initialize Firestore client: {e}")
@@ -90,6 +91,8 @@ class FirestoreService:
                     query = query.where('metadata.document_date', '>=', filters['date_from'])
                 if filters.get('date_to'):
                     query = query.where('metadata.document_date', '<=', filters['date_to'])
+                if filters.get('flow_id'):
+                    query = query.where('flow_id', '==', filters['flow_id'])
             
             # Order by created_at descending
             query = query.order_by('created_at', direction=Query.DESCENDING)
@@ -241,4 +244,128 @@ class FirestoreService:
         except Exception as e:
             logger.error(f"Failed to update job progress: {e}")
             return False
+    
+    # Flow Operations
+    
+    def create_flow(self, flow_id: str, data: Dict[str, Any]) -> str:
+        """Create a new flow"""
+        try:
+            doc_ref = self.flows_collection.document(flow_id)
+            data['created_at'] = firestore.SERVER_TIMESTAMP
+            data['updated_at'] = firestore.SERVER_TIMESTAMP
+            data['document_count'] = 0
+            doc_ref.set(data)
+            logger.info(f"Created flow record: {flow_id}")
+            return flow_id
+        except Exception as e:
+            logger.error(f"Failed to create flow record: {e}")
+            raise
+    
+    def get_flow(self, flow_id: str) -> Optional[Dict[str, Any]]:
+        """Get a flow by ID"""
+        try:
+            doc_ref = self.flows_collection.document(flow_id)
+            doc = doc_ref.get()
+            if doc.exists:
+                data = doc.to_dict()
+                data['flow_id'] = doc.id
+                return data
+            return None
+        except Exception as e:
+            logger.error(f"Failed to get flow: {e}")
+            return None
+    
+    def list_flows(
+        self,
+        page: int = 1,
+        page_size: int = 20
+    ) -> tuple[List[Dict[str, Any]], int]:
+        """List flows with pagination"""
+        try:
+            query = self.flows_collection
+            
+            # Order by created_at descending
+            query = query.order_by('created_at', direction=Query.DESCENDING)
+            
+            # Get total count (before pagination)
+            total = len(list(query.stream()))
+            
+            # Apply pagination
+            offset = (page - 1) * page_size
+            docs = query.offset(offset).limit(page_size).stream()
+            
+            flows = []
+            for doc in docs:
+                data = doc.to_dict()
+                data['flow_id'] = doc.id
+                flows.append(data)
+            
+            return flows, total
+        except Exception as e:
+            logger.error(f"Failed to list flows: {e}")
+            return [], 0
+    
+    def update_flow(self, flow_id: str, data: Dict[str, Any]) -> bool:
+        """Update a flow record"""
+        try:
+            doc_ref = self.flows_collection.document(flow_id)
+            data['updated_at'] = firestore.SERVER_TIMESTAMP
+            doc_ref.update(data)
+            logger.info(f"Updated flow record: {flow_id}")
+            return True
+        except Exception as e:
+            logger.error(f"Failed to update flow record: {e}")
+            return False
+    
+    def increment_flow_document_count(self, flow_id: str, increment: int = 1) -> bool:
+        """Increment the document count for a flow"""
+        try:
+            doc_ref = self.flows_collection.document(flow_id)
+            doc = doc_ref.get()
+            if doc.exists:
+                current_data = doc.to_dict()
+                current_count = current_data.get('document_count', 0)
+                doc_ref.update({
+                    'document_count': current_count + increment,
+                    'updated_at': firestore.SERVER_TIMESTAMP
+                })
+                logger.info(f"Incremented document count for flow {flow_id} by {increment}")
+                return True
+            else:
+                logger.warning(f"Flow {flow_id} not found for document count increment")
+                return False
+        except Exception as e:
+            logger.error(f"Failed to increment flow document count: {e}")
+            return False
+    
+    def get_documents_by_flow_id(
+        self,
+        flow_id: str,
+        page: int = 1,
+        page_size: int = 20
+    ) -> tuple[List[Dict[str, Any]], int]:
+        """Get documents by flow_id with pagination"""
+        try:
+            query = self.documents_collection.where('flow_id', '==', flow_id)
+            
+            # Order by created_at descending
+            query = query.order_by('created_at', direction=Query.DESCENDING)
+            
+            # Get total count (before pagination)
+            total = len(list(query.stream()))
+            
+            # Apply pagination
+            offset = (page - 1) * page_size
+            docs = query.offset(offset).limit(page_size).stream()
+            
+            documents = []
+            for doc in docs:
+                data = doc.to_dict()
+                data['document_id'] = doc.id
+                documents.append(data)
+            
+            return documents, total
+        except Exception as e:
+            logger.error(f"Failed to get documents by flow_id: {e}")
+            return [], 0
 
