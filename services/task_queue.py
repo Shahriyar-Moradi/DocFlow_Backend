@@ -82,6 +82,9 @@ class TaskQueue:
         try:
             logger.info(f"Starting background processing for document: {document_id}")
             
+            # Initialize result dictionary to avoid UnboundLocalError in finally block
+            result = {}
+            
             # Update status to processing
             self.firestore_service.update_document(document_id, {
                 'processing_status': 'processing'
