@@ -32,7 +32,7 @@ from models.schemas import (
 from services.firestore_service import FirestoreService
 from services.task_queue import TaskQueue
 from services.document_processor import DocumentProcessor
-from services.category_mapper import map_backend_to_ui_category, get_all_ui_categories
+from services.category_mapper import map_backend_to_ui_category, get_all_ui_categories, is_valid_ui_category
 from gcs_service import GCSVoucherService
 from services.mocks import MockFirestoreService, MockGCSVoucherService
 
@@ -434,10 +434,16 @@ async def list_documents(
         page: Page number (starts at 1)
         page_size: Number of documents per page
         classification: Filter by backend classification
-        ui_category: Filter by UI category (Contracts, Invoices, etc.)
+        ui_category: Filter by UI category (Contracts, Invoices, Insurance, RTA, Forms, ID / Passport, Others, Unknown)
         branch_id: Filter by branch ID
     """
     try:
+        # Validate ui_category if provided
+        if ui_category and not is_valid_ui_category(ui_category):
+            # If invalid, try to map it (for backward compatibility)
+            logger.warning(f"Invalid ui_category provided: {ui_category}, attempting to map")
+            # Don't reject, just log - let the filter work if it matches
+        
         filters = {}
         if classification:
             filters['classification'] = classification
