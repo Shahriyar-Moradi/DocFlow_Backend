@@ -373,22 +373,30 @@ class DocumentProcessor:
                 classification_prompt = '''Analyze this document image and classify it into one of these categories based on its content, structure, and layout:
 
 - Invoice: A bill requesting payment for goods or services provided
-- Receipt: Proof of payment for goods or services already paid
-- Contract/Agreement: Legal document outlining terms between parties
-- Purchase Order: Document requesting goods or services from a vendor
-- Legal Document: Court documents, legal notices, legal agreements, etc.
-- Voucher: Payment voucher, credit voucher, or transaction voucher
-- Real Estate: Property documents, lease agreements, property deeds, rental agreements, etc.
-- Other: Any other official or business document not fitting the above categories
+- Payment: Proof of payment, payment receipt, payment voucher, or payment confirmation
+- Contracts: Legal documents outlining terms between parties. Subcategories include:
+  * Sales & Purchase Agreement (SPA): Agreement for sale and purchase of property or goods
+  * Broker Agreement: Agreement with a broker or agent for services
+  * Property Management Contract: Contract for property management services
+  * Renewal Contract: Contract renewal or extension agreement
+  * Refund / Cancellation Contract: Contract for refunds or cancellations
+  * Tenancy Contract: Rental or lease agreement for property
+- Sales: Sales documents, sales agreements, sales receipts (not contracts)
+- Purchase: Purchase orders, purchase agreements, purchase receipts (not contracts)
+- ID/Passport: Identification documents, passports, national ID cards, driver's licenses
+- Unknown: Documents that cannot be clearly classified into any of the above categories
 
 Consider these indicators:
 - Document headers and titles
 - Field labels and structure
+- Document date should be the date of the document, not the current date
 - Presence of signatures or authorization
 - Payment/amount sections
 - Terms and conditions sections
 - Document layout and formatting
 - Content and context
+
+For Contracts, be specific about the subcategory if identifiable (e.g., "Tenancy Contract", "Sales & Purchase Agreement (SPA)", "Broker Agreement", etc.). If the contract type is unclear, use "Contracts" as the general category.
 
 Return your classification in JSON format:
 {
@@ -504,8 +512,9 @@ Be specific and accurate. If uncertain, use lower confidence scores.'''
 Extract the following fields (include all that are present, omit those that are not):
 
 1. **Document number/ID**: Any unique identifier, invoice number, receipt number, contract number, etc.
-2. **Date(s)**: Document date, issue date, due date, effective date, expiration date - extract all dates found
-3. **Amount/Total**: Total amount, subtotal, tax, fees, discounts - include currency (USD, EUR, AED, etc.)
+2. **Document Date** (CRITICAL): The primary date of the document - this is the date when the document was issued, created, or signed. Look for fields like "Date", "Document Date", "Issue Date", "Created Date", "Date of Issue", etc. This should be the main date of the document, not the current date. Extract this as "document_date" in the JSON.
+3. **Other Date(s)**: Due date, effective date, expiration date, delivery date - extract all other dates found
+4. **Amount/Total**: Total amount, subtotal, tax, fees, discounts - include currency (USD, EUR, AED, etc.)
 4. **Parties involved**: 
    - Buyer, seller, client, customer, vendor, supplier
    - Names, addresses, contact information
@@ -538,6 +547,7 @@ Return in JSON format with all extracted fields:
 {{
     "document_number": "INV-2025-001",
     "document_id": "DOC-12345",
+    "document_date": "2025-01-15",
     "issue_date": "2025-01-15",
     "due_date": "2025-02-15",
     "total_amount": "1500.00",
@@ -1073,11 +1083,13 @@ Return in JSON format:
                         # Extract common fields from general extraction
                         result['document_no'] = json_data.get('document_number') or json_data.get('document_id') or json_data.get('document_no', '').strip()
                         
-                        # Extract date (prefer issue_date, fallback to document_date or date)
+                        # Extract date (prioritize document_date, then issue_date, then other date fields)
                         result['document_date'] = (
-                            json_data.get('issue_date') or 
                             json_data.get('document_date') or 
+                            json_data.get('issue_date') or 
                             json_data.get('date') or 
+                            json_data.get('created_date') or
+                            json_data.get('date_of_issue') or
                             ''
                         ).strip()
                         

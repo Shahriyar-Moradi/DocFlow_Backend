@@ -198,7 +198,15 @@ async def upload_document(
                             currency = 'USD' if extracted_data.get('invoice_amount_usd') else ('AED' if extracted_data.get('invoice_amount_aed') else None)
                         else:
                             document_number = extracted_data.get('document_number') or extracted_data.get('document_id', '')
-                            document_date = extracted_data.get('issue_date') or extracted_data.get('document_date', '')
+                            # Prioritize document_date, then issue_date, then other date fields
+                            document_date = (
+                                extracted_data.get('document_date') or 
+                                extracted_data.get('issue_date') or 
+                                extracted_data.get('date') or 
+                                extracted_data.get('created_date') or
+                                extracted_data.get('date_of_issue') or
+                                ''
+                            )
                             total_amount = extracted_data.get('total_amount', '')
                             currency = extracted_data.get('currency', '')
                         
@@ -235,7 +243,9 @@ async def upload_document(
             'extracted_data': extracted_data,
             'metadata': {
                 'classification': document_type,
-                'ui_category': ui_category
+                'ui_category': ui_category,
+                'document_no': document_number,
+                'document_date': document_date
             },
             'created_at': datetime.now(),
             'updated_at': datetime.now()
