@@ -407,7 +407,7 @@ class VoucherOCRService:
         max_retries = 1
         retry_delay = 30  # seconds
         
-        for attempt in range(max_retries + 1):
+        for attempt in range(1, max_retries + 1):
             try:
                 # Format request for AWS Bedrock
                 request_body = {
@@ -428,7 +428,7 @@ class VoucherOCRService:
                 
             except Exception as e:
                 error_message = str(e)
-                print(f"OCR attempt {attempt + 1} failed: {error_message}")
+                print(f"OCR attempt {attempt} failed: {error_message}")
                 
                 # Classify the error type
                 if "authentication" in error_message.lower() or "invalid" in error_message.lower():

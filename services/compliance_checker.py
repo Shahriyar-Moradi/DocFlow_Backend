@@ -19,6 +19,7 @@ sys.path.append(str(Path(__file__).parent.parent))
 
 from config import settings
 from services.document_processor import DocumentProcessor
+from .anthropic_utils import detect_model_not_found_error
 from .json_utils import extract_json_from_text
 
 logger = logging.getLogger(__name__)
@@ -110,9 +111,9 @@ class ComplianceChecker:
         max_retries = settings.OCR_MAX_RETRIES
         retry_delay = settings.OCR_RETRY_DELAY
         
-        for attempt in range(max_retries + 1):
+        for attempt in range(1, max_retries + 1):
             try:
-                logger.info(f"Analyzing document compliance (attempt {attempt + 1}) for type: {document_type}")
+                logger.info(f"Analyzing document compliance (attempt {attempt}) for type: {document_type}")
                 
                 if not os.path.exists(image_path):
                     raise FileNotFoundError(f"Document file does not exist: {image_path}")
@@ -233,7 +234,11 @@ Now analyze this document:'''
                 
             except Exception as e:
                 error_message = str(e)
-                logger.error(f"Compliance analysis attempt {attempt + 1} failed: {error_message}")
+                logger.error(f"Compliance analysis attempt {attempt} failed: {error_message}")
+
+                model_hint = detect_model_not_found_error(error_message, self.model)
+                if model_hint:
+                    raise Exception(f"OCR_MODEL_NOT_FOUND: {model_hint}") from e
                 
                 if attempt < max_retries:
                     logger.info(f"Retrying in {retry_delay} seconds...")

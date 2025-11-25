@@ -18,6 +18,7 @@ from pathlib import Path
 sys.path.append(str(Path(__file__).parent.parent))
 
 from config import settings
+from .anthropic_utils import detect_model_not_found_error
 from .json_utils import extract_json_from_text
 
 logger = logging.getLogger(__name__)
@@ -160,10 +161,16 @@ Be thorough and accurate. Extract all available information.'''
                 raise ValueError("No JSON found in response")
                 
         except Exception as e:
-            logger.error(f"Fast processing failed: {e}")
+            error_message = str(e)
+            logger.error(f"Fast processing failed: {error_message}")
+
+            model_hint = detect_model_not_found_error(error_message, self.model)
+            if model_hint:
+                error_message = f"OCR_MODEL_NOT_FOUND: {model_hint}"
+
             return {
                 'success': False,
-                'error': str(e),
+                'error': error_message,
                 'document_type': 'Other',
                 'classification_confidence': 0.0
             }

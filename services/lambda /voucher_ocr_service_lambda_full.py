@@ -519,9 +519,9 @@ Important: If a screenshot contains a visible voucher/receipt, classify as "vouc
         max_retries = 1
         retry_delay = 30  # seconds
         
-        for attempt in range(max_retries + 1):
+        for attempt in range(1, max_retries + 1):
             try:
-                print(f"Attempting Anthropic OCR via REST API (attempt {attempt + 1})...")
+                print(f"Attempting Anthropic OCR via REST API (attempt {attempt})...")
                 print(f"📄 Image path: {image_path}")
                 
                 # Verify image exists before encoding
@@ -652,7 +652,7 @@ Return in JSON format:
                 
             except Exception as e:
                 error_message = str(e)
-                print(f"OCR attempt {attempt + 1} failed: {error_message}")
+                print(f"OCR attempt {attempt} failed: {error_message}")
                 
                 if attempt < max_retries:
                     print(f"Generic error occurred. Retrying in {retry_delay} seconds...")

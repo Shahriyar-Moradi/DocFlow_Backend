@@ -34,6 +34,7 @@ from pathlib import Path
 sys.path.append(str(Path(__file__).parent.parent))
 
 from config import settings
+from .anthropic_utils import detect_model_not_found_error
 from .json_utils import extract_json_from_text
 
 logger = logging.getLogger(__name__)
@@ -358,9 +359,9 @@ class DocumentProcessor:
         max_retries = settings.OCR_MAX_RETRIES
         retry_delay = settings.OCR_RETRY_DELAY
         
-        for attempt in range(max_retries + 1):
+        for attempt in range(1, max_retries + 1):
             try:
-                logger.info(f"Classifying document type (attempt {attempt + 1})...")
+                logger.info(f"Classifying document type (attempt {attempt})...")
                 
                 if not os.path.exists(image_path):
                     raise FileNotFoundError(f"Image file does not exist: {image_path}")
@@ -464,14 +465,17 @@ Be specific and accurate. If uncertain, use lower confidence scores.'''
                 
             except Exception as e:
                 error_message = str(e)
-                logger.error(f"Classification attempt {attempt + 1} failed: {error_message}")
+                logger.error(f"Classification attempt {attempt} failed: {error_message}")
+
+                model_hint = detect_model_not_found_error(error_message, self.model)
+                if model_hint:
+                    raise Exception(f"OCR_MODEL_NOT_FOUND: {model_hint}") from e
                 
                 if attempt < max_retries:
                     logger.info(f"Retrying in {retry_delay} seconds...")
                     time.sleep(retry_delay)
                     continue
                 else:
-                    # Return default on failure
                     logger.warning("Classification failed, using default 'Other'")
                     return {
                         'document_type': 'Other',
@@ -493,9 +497,9 @@ Be specific and accurate. If uncertain, use lower confidence scores.'''
         max_retries = settings.OCR_MAX_RETRIES
         retry_delay = settings.OCR_RETRY_DELAY
         
-        for attempt in range(max_retries + 1):
+        for attempt in range(1, max_retries + 1):
             try:
-                logger.info(f"Extracting general document data (attempt {attempt + 1}) for type: {document_type}")
+                logger.info(f"Extracting general document data (attempt {attempt}) for type: {document_type}")
                 
                 if not os.path.exists(image_path):
                     raise FileNotFoundError(f"Image file does not exist: {image_path}")
@@ -616,7 +620,11 @@ Adapt the extraction based on the document type ({document_type}). Be thorough a
                 
             except Exception as e:
                 error_message = str(e)
-                logger.error(f"General extraction attempt {attempt + 1} failed: {error_message}")
+                logger.error(f"General extraction attempt {attempt} failed: {error_message}")
+
+                model_hint = detect_model_not_found_error(error_message, self.model)
+                if model_hint:
+                    raise Exception(f"OCR_MODEL_NOT_FOUND: {model_hint}") from e
                 
                 if attempt < max_retries:
                     logger.info(f"Retrying in {retry_delay} seconds...")
@@ -630,9 +638,9 @@ Adapt the extraction based on the document type ({document_type}). Be thorough a
         max_retries = settings.OCR_MAX_RETRIES
         retry_delay = settings.OCR_RETRY_DELAY
         
-        for attempt in range(max_retries + 1):
+        for attempt in range(1, max_retries + 1):
             try:
-                logger.info(f"Attempting Anthropic OCR (attempt {attempt + 1})...")
+                logger.info(f"Attempting Anthropic OCR (attempt {attempt})...")
                 logger.info(f"Image path: {image_path}")
                 
                 if not os.path.exists(image_path):
@@ -741,7 +749,11 @@ Return in JSON format:
                 
             except Exception as e:
                 error_message = str(e)
-                logger.error(f"OCR attempt {attempt + 1} failed: {error_message}")
+                logger.error(f"OCR attempt {attempt} failed: {error_message}")
+
+                model_hint = detect_model_not_found_error(error_message, self.model)
+                if model_hint:
+                    raise Exception(f"OCR_MODEL_NOT_FOUND: {model_hint}") from e
                 
                 if attempt < max_retries:
                     logger.info(f"Retrying in {retry_delay} seconds...")
