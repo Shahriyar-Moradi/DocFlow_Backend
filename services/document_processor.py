@@ -313,11 +313,12 @@ class DocumentProcessor:
             logger.error(f"Error creating organized path: {e}")
             return None
     
-    def _create_general_organized_path(self, document_type: str, document_date: Optional[str], document_no: str) -> Optional[str]:
+    def _create_general_organized_path(self, document_type: str, document_date: Optional[str], document_no: Optional[str], fallback_id: Optional[str] = None) -> Optional[str]:
         """
         Create organized path for general document types
         
         Structure: organized_documents/{document_type}/{year}/{month}/{date}/{document_no}/
+        If document_no is empty, uses fallback_id or "no_doc_no"
         """
         try:
             year, month, day = self._parse_document_date(document_date)
@@ -326,8 +327,13 @@ class DocumentProcessor:
             # Sanitize document type for folder name
             doc_type_safe = document_type.lower().replace(' ', '_').replace('/', '_')
             
-            # Sanitize document number for folder name
-            doc_no_safe = re.sub(r'[<>:"/\\|?*]', '_', document_no.strip())
+            # Use fallback if document_no is empty
+            if document_no and document_no.strip():
+                doc_no_safe = re.sub(r'[<>:"/\\|?*]', '_', document_no.strip())
+            else:
+                # Use fallback_id or default value
+                doc_no_safe = fallback_id if fallback_id else "no_doc_no"
+                logger.warning(f"Document number is empty, using fallback: {doc_no_safe}")
             
             organized_path = f"{settings.ORGANIZED_FOLDER}/{doc_type_safe}/{year}/{month_name}/{day}-{month}-{year}/{doc_no_safe}"
             
@@ -1159,28 +1165,39 @@ Return in JSON format:
                         result['organized_path'] = None
             
             # Generate organized path
-            if result['success'] and result['document_no']:
+            if result['success']:
                 # For vouchers, use existing voucher path structure
                 if result.get('is_valid_voucher') and result['classification'] in self.voucher_types:
-                    result['organized_path'] = self._create_organized_path(
-                        document_no=result['document_no'],
-                        document_date=result['document_date'],
-                        branch_id=result['branch_id'],
-                        voucher_type=result['classification']
-                    )
-                    logger.info(f"Valid voucher - will organize to: {result['organized_path']}")
+                    # Vouchers require document_no
+                    if result['document_no']:
+                        result['organized_path'] = self._create_organized_path(
+                            document_no=result['document_no'],
+                            document_date=result['document_date'],
+                            branch_id=result['branch_id'],
+                            voucher_type=result['classification']
+                        )
+                        logger.info(f"Valid voucher - will organize to: {result['organized_path']}")
+                    else:
+                        logger.warning("Valid voucher but no document_no - marking as attachment")
+                        result['organized_path'] = None
+                        result['needs_attachment'] = True
+                elif not result.get('is_valid_voucher') and document_type.lower() == 'voucher':
+                    # Attachment voucher (no document_no)
+                    result['organized_path'] = None
+                    result['needs_attachment'] = True
+                    logger.info("Attachment document - will search for matching valid voucher")
                 else:
-                    # For general documents, create path based on document type
+                    # For general documents, create path even without document_no
+                    # Use timestamp as fallback identifier
+                    import time
+                    fallback_id = f"doc_{int(time.time() * 1000)}"
                     result['organized_path'] = self._create_general_organized_path(
                         document_type=document_type,
                         document_date=result['document_date'],
-                        document_no=result['document_no']
+                        document_no=result.get('document_no'),
+                        fallback_id=fallback_id
                     )
                     logger.info(f"General document - will organize to: {result['organized_path']}")
-            elif result['success'] and not result.get('is_valid_voucher') and document_type.lower() == 'voucher':
-                result['organized_path'] = None
-                result['needs_attachment'] = True
-                logger.info("Attachment document - will search for matching valid voucher")
             
             # Convert image to PDF
             pdf_path = None
