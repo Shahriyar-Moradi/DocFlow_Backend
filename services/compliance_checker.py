@@ -80,12 +80,27 @@ class ComplianceChecker:
                 ]
             }
         
-        # Default: no specific requirements
-        return {
-            'fields': [],
-            'signatures': [],
-            'attachments': []
-        }
+        # Sales & Purchase Agreement / Contract rules
+        elif 'sales' in document_type_lower or 'purchase' in document_type_lower or 'contract' in document_type_lower or 'agreement' in document_type_lower:
+            return {
+                'fields': [],
+                'signatures': [
+                    'Buyer Signature',
+                    'Seller Signature'
+                ],
+                'attachments': []
+            }
+        
+        # Default: ALL documents require at least one signature for compliance
+        # This is a universal requirement - any official document should be signed
+        else:
+            return {
+                'fields': [],
+                'signatures': [
+                    'Document Signature'  # Generic - any signature on the document
+                ],
+                'attachments': []
+            }
     
     def _encode_image_to_base64(self, image_path: str) -> tuple[str, str]:
         """Encode image or PDF to base64 - reuse from document processor"""
@@ -152,18 +167,33 @@ class ComplianceChecker:
    - Mark as "found" if present
 
 2. **CRITICAL - Signature Detection**: For each required signature, you MUST perform a thorough visual inspection:
+   
+   **IMPORTANT**: If the required signature is "Document Signature" (generic), you should look for ANY signature ANYWHERE on the document, even if there's no specific signature field or label.
+   
    - **LOOK FOR ACTUAL HANDWRITTEN SIGNATURES** - These appear as handwritten marks, ink signatures, or digital signature images
    - **Check if the signature field is FILLED** - There must be a visible signature, name, or mark in the signature area
+   - **For specific signatures** (like "Landlord Signature", "Tenant Signature", "Buyer Signature", "Seller Signature"):
+     * Look for signatures near labels mentioning that party
+     * Check at the bottom of the document where parties typically sign
+   - **For generic "Document Signature"**:
+     * Scan the ENTIRE document for ANY visible signature
+     * Look at the bottom, sides, or anywhere on the document
+     * Even if there's NO signature field or label, a document with a visible signature should be marked as "detected"
+     * If you find ANY signature mark, handwriting, or signed name ANYWHERE on the document, mark as "detected"
+     * If you cannot find ANY signature or signed name ANYWHERE on the entire document, mark as "not_detected"
+   
    - A signature field label (like "Signature:", "Signed by:", "_____________") is NOT enough
    - An EMPTY signature line or blank signature field means the signature is MISSING
    - Mark as "detected" ONLY if you can see:
      * An actual handwritten signature mark/scribble
      * OR a typed/printed name in the signature field (e.g., "John Doe" written where signature should be)
      * OR any visible mark or signature-like drawing in the signature area
+     * OR a stamped signature/company seal with a name
    - Mark as "not_detected" if:
      * The signature field/line is empty or blank
      * Only the label "Signature:" exists without any actual signature
      * No name or mark is present where the signature should be
+     * You cannot find ANY signature ANYWHERE on the document (for generic "Document Signature")
    - **BE STRICT**: If you cannot clearly see a signature mark, name, or any writing in the signature area, mark it as "not_detected"
 
 3. **Attachment Check**: For each required attachment:
