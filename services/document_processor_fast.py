@@ -18,6 +18,7 @@ from pathlib import Path
 sys.path.append(str(Path(__file__).parent.parent))
 
 from config import settings
+from .json_utils import extract_json_from_text
 
 logger = logging.getLogger(__name__)
 
@@ -143,9 +144,8 @@ Be thorough and accurate. Extract all available information.'''
             logger.info("Combined classification and extraction completed")
             
             # Parse JSON response
-            json_match = re.search(r'\{[^}]*\}', result_text, re.DOTALL)
-            if json_match:
-                data = json.loads(json_match.group())
+            data = extract_json_from_text(result_text)
+            if data:
                 return {
                     'success': True,
                     'document_type': data.get('document_type', 'Other'),

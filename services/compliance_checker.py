@@ -19,6 +19,7 @@ sys.path.append(str(Path(__file__).parent.parent))
 
 from config import settings
 from services.document_processor import DocumentProcessor
+from .json_utils import extract_json_from_text
 
 logger = logging.getLogger(__name__)
 
@@ -222,17 +223,9 @@ Now analyze this document:'''
                 logger.info(f"Compliance analysis result received")
                 
                 # Extract JSON from response
-                json_match = re.search(r'\{[^}]*\}', compliance_result, re.DOTALL)
-                if json_match:
-                    try:
-                        compliance_data = json.loads(json_match.group())
-                        return compliance_data
-                    except json.JSONDecodeError:
-                        # Try to extract nested JSON
-                        json_match = re.search(r'\{[\s\S]*\}', compliance_result)
-                        if json_match:
-                            compliance_data = json.loads(json_match.group())
-                            return compliance_data
+                compliance_data = extract_json_from_text(compliance_result)
+                if compliance_data:
+                    return compliance_data
                 
                 # Fallback: try to parse manually
                 logger.warning("Failed to parse JSON from compliance response, using fallback parsing")

@@ -34,6 +34,7 @@ from pathlib import Path
 sys.path.append(str(Path(__file__).parent.parent))
 
 from config import settings
+from .json_utils import extract_json_from_text
 
 logger = logging.getLogger(__name__)
 
@@ -439,9 +440,8 @@ Be specific and accurate. If uncertain, use lower confidence scores.'''
                 logger.info(f"Classification result received: {classification_result[:200]}")
                 
                 # Extract JSON from response
-                json_match = re.search(r'\{[^}]*\}', classification_result, re.DOTALL)
-                if json_match:
-                    classification_data = json.loads(json_match.group())
+                classification_data = extract_json_from_text(classification_result)
+                if classification_data:
                     return {
                         'document_type': classification_data.get('document_type', 'Other'),
                         'confidence': float(classification_data.get('confidence', 0.5)),
@@ -1033,9 +1033,8 @@ Return in JSON format:
             
             # Try to parse JSON response
             try:
-                json_match = re.search(r'\{[^}]*\}', transaction_data, re.DOTALL)
-                if json_match:
-                    json_data = json.loads(json_match.group())
+                json_data = extract_json_from_text(transaction_data)
+                if json_data:
                     result['extracted_data'] = json_data
                     
                     # Handle voucher-specific extraction

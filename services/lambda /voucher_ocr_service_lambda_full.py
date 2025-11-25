@@ -16,6 +16,7 @@ except ImportError:
 
 # Use AWS Bedrock for Claude models
 import boto3
+from services.json_utils import extract_json_from_text
 
 try:
     from PIL import Image
@@ -231,9 +232,8 @@ Important: If a screenshot contains a visible voucher/receipt, classify as "vouc
             print(f"📋 Zero-shot validation response: {validation_text}")
             
             # Parse JSON response
-            json_match = re.search(r'\{[^}]*\}', validation_text, re.DOTALL)
-            if json_match:
-                validation_data = json.loads(json_match.group())
+            validation_data = extract_json_from_text(validation_text)
+            if validation_data:
                 category = validation_data.get('category', 'none voucher receipt')
                 confidence = float(validation_data.get('confidence', 0.0))
                 reasoning = validation_data.get('reasoning', 'No reasoning provided')
@@ -1665,9 +1665,8 @@ Return in JSON format:
             # Try to parse JSON response first
             try:
                 # Look for JSON in the response
-                json_match = re.search(r'\{[^}]*\}', transaction_data, re.DOTALL)
-                if json_match:
-                    json_data = json.loads(json_match.group())
+                json_data = extract_json_from_text(transaction_data)
+                if json_data:
                     
                     # Extract data from JSON response
                     result['document_no'] = json_data.get('document_no', '').strip()

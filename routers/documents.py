@@ -38,6 +38,7 @@ from services.category_mapper import map_backend_to_ui_category, get_all_ui_cate
 from services.compliance_checker import ComplianceChecker
 from gcs_service import GCSVoucherService
 from services.mocks import MockFirestoreService, MockGCSVoucherService
+from services.json_utils import extract_json_from_text
 
 logger = logging.getLogger(__name__)
 
@@ -189,9 +190,8 @@ async def upload_document(
                 
                 # Parse extraction results
                 try:
-                    json_match = re.search(r'\{[^}]*\}', extraction_text, re.DOTALL)
-                    if json_match:
-                        extracted_data = json.loads(json_match.group())
+                    extracted_data = extract_json_from_text(extraction_text)
+                    if extracted_data:
                         
                         # Extract key fields for response
                         if document_type.lower() == 'voucher':
