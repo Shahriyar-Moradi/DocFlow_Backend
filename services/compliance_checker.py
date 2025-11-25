@@ -129,7 +129,7 @@ class ComplianceChecker:
                 required_attachments = required_items.get('attachments', [])
                 
                 # Build compliance check prompt
-                compliance_prompt = f'''You are a compliance checker for {document_type} documents. Analyze this document and check for missing required fields, signatures, and attachments.
+                compliance_prompt = f'''You are a strict compliance checker for {document_type} documents. Analyze this document and check for missing required fields, signatures, and attachments.
 
 **Required Fields to Check:**
 {json.dumps(required_fields, indent=2) if required_fields else "None specified for this document type"}
@@ -151,12 +151,20 @@ class ComplianceChecker:
    - Mark as "missing" if not found in either location
    - Mark as "found" if present
 
-2. **Signature Detection**: For each required signature:
-   - Visually inspect the document to detect signature marks/signatures
-   - Check extracted text for signature field labels (e.g., "Signed by", "Signature:", "Landlord Signature", "Tenant Signature")
-   - Mark as "detected" if signature is visually present in the document
-   - Mark as "not_detected" if signature is missing
-   - Be thorough - look for actual signature marks, not just signature fields
+2. **CRITICAL - Signature Detection**: For each required signature, you MUST perform a thorough visual inspection:
+   - **LOOK FOR ACTUAL HANDWRITTEN SIGNATURES** - These appear as handwritten marks, ink signatures, or digital signature images
+   - **Check if the signature field is FILLED** - There must be a visible signature, name, or mark in the signature area
+   - A signature field label (like "Signature:", "Signed by:", "_____________") is NOT enough
+   - An EMPTY signature line or blank signature field means the signature is MISSING
+   - Mark as "detected" ONLY if you can see:
+     * An actual handwritten signature mark/scribble
+     * OR a typed/printed name in the signature field (e.g., "John Doe" written where signature should be)
+     * OR any visible mark or signature-like drawing in the signature area
+   - Mark as "not_detected" if:
+     * The signature field/line is empty or blank
+     * Only the label "Signature:" exists without any actual signature
+     * No name or mark is present where the signature should be
+   - **BE STRICT**: If you cannot clearly see a signature mark, name, or any writing in the signature area, mark it as "not_detected"
 
 3. **Attachment Check**: For each required attachment:
    - Check the document text to see if it mentions the attachment (e.g., "Passport copy attached", "ID copy required")
@@ -181,16 +189,18 @@ Return your analysis in JSON format:
     "missing_attachments": ["Attachment1"]
 }}
 
-**Important Rules:**
-- Be accurate and thorough in your analysis
-- Only report issues that are actually missing
-- For signatures, you must visually detect them in the document image
+**CRITICAL RULES:**
+- Be STRICT and thorough in your analysis
+- For signatures: Empty signature fields or signature lines = "not_detected" = Missing
+- For signatures: Only mark as "detected" if you can see an ACTUAL signature, name, or mark in the signature area
+- A signature field with no visible signature/name/mark inside it is NOT detected
 - For fields, check both extracted data AND visual presence in document
 - Use clear, descriptive messages for each issue
 - If all required items are present, set overall_status to "compliant"
 - If any required items are missing, set overall_status to "non_compliant"
+- When in doubt about a signature, mark it as "not_detected"
 
-Now analyze this document:'''
+Now analyze this document carefully:'''
                 
                 messages = [
                     {
@@ -255,7 +265,7 @@ Now analyze this document:'''
         required_signatures: List[str],
         required_attachments: List[str]
     ) -> Dict[str, Any]:
-        """Fallback parser if JSON parsing fails"""
+        """Fallback parser if JSON parsing fails - strict signature checking"""
         issues = []
         missing_fields = []
         missing_signatures = []
@@ -263,9 +273,21 @@ Now analyze this document:'''
         
         response_lower = response_text.lower()
         
-        # Check fields
+        # Check fields - look for explicit "found" or "present" indicators
         for field in required_fields:
-            if field.lower() not in response_lower or 'missing' in response_lower:
+            field_mentioned = field.lower() in response_lower
+            is_found = any(keyword in response_lower for keyword in [
+                f"{field.lower()} → found",
+                f"{field.lower()}: found",
+                f"{field.lower()} is present"
+            ])
+            is_missing = any(keyword in response_lower for keyword in [
+                f"{field.lower()} → missing",
+                f"{field.lower()}: missing",
+                f"{field.lower()} is missing"
+            ])
+            
+            if not field_mentioned or is_missing or not is_found:
                 issues.append({
                     "field": field,
                     "status": "missing",
@@ -273,19 +295,50 @@ Now analyze this document:'''
                 })
                 missing_fields.append(field)
         
-        # Check signatures
+        # Check signatures - STRICT: only mark as found if explicitly detected
         for sig in required_signatures:
-            if sig.lower() not in response_lower or 'not detected' in response_lower:
+            sig_mentioned = sig.lower() in response_lower
+            is_detected = any(keyword in response_lower for keyword in [
+                f"{sig.lower()} → detected",
+                f"{sig.lower()}: detected",
+                f"{sig.lower()} is detected",
+                f"{sig.lower()} present"
+            ])
+            is_not_detected = any(keyword in response_lower for keyword in [
+                f"{sig.lower()} → not detected",
+                f"{sig.lower()}: not detected",
+                f"{sig.lower()} is not detected",
+                f"{sig.lower()} missing",
+                f"{sig.lower()} not found",
+                "empty signature",
+                "blank signature",
+                "no signature"
+            ])
+            
+            # Strict check: if not explicitly detected or if explicitly not detected, mark as missing
+            if not is_detected or is_not_detected:
                 issues.append({
                     "field": sig,
                     "status": "not_detected",
-                    "message": f"{sig} → Not Detected"
+                    "message": f"{sig} → Not Detected (signature field is empty or no visible signature)"
                 })
                 missing_signatures.append(sig)
         
         # Check attachments
         for attachment in required_attachments:
-            if attachment.lower() not in response_lower or 'missing' in response_lower:
+            attachment_mentioned = attachment.lower() in response_lower
+            is_present = any(keyword in response_lower for keyword in [
+                f"{attachment.lower()} → present",
+                f"{attachment.lower()}: present",
+                f"{attachment.lower()} attached"
+            ])
+            is_missing = any(keyword in response_lower for keyword in [
+                f"{attachment.lower()} → missing",
+                f"{attachment.lower()}: missing",
+                f"{attachment.lower()} not attached"
+            ])
+            
+            if not attachment_mentioned or is_missing or not is_present:
                 issues.append({
                     "field": attachment,
                     "status": "attachment_missing",
