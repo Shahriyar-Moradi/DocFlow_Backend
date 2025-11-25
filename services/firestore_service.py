@@ -71,6 +71,37 @@ class FirestoreService:
             logger.error(f"Failed to update document record: {e}")
             return False
     
+    def update_compliance_check_results(self, document_id: str, compliance_data: Dict[str, Any]) -> bool:
+        """Update compliance check results in document record"""
+        try:
+            doc_ref = self.documents_collection.document(document_id)
+            
+            # Store compliance data in a dedicated field
+            update_data = {
+                'compliance_check': compliance_data,
+                'updated_at': firestore.SERVER_TIMESTAMP
+            }
+            
+            doc_ref.update(update_data)
+            logger.info(f"Updated compliance check results for document: {document_id}")
+            return True
+        except Exception as e:
+            logger.error(f"Failed to update compliance check results: {e}")
+            return False
+    
+    def get_compliance_check_results(self, document_id: str) -> Optional[Dict[str, Any]]:
+        """Get compliance check results for a document"""
+        try:
+            doc_ref = self.documents_collection.document(document_id)
+            doc = doc_ref.get()
+            if doc.exists:
+                data = doc.to_dict()
+                return data.get('compliance_check')
+            return None
+        except Exception as e:
+            logger.error(f"Failed to get compliance check results: {e}")
+            return None
+    
     def list_documents(
         self,
         page: int = 1,

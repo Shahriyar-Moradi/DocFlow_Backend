@@ -155,3 +155,22 @@ class CategoryStatsListResponse(BaseModel):
     categories: List[CategoryStatsResponse]
     total_documents: int
 
+
+class ComplianceIssue(BaseModel):
+    """Individual compliance issue"""
+    field: str
+    status: str  # "missing", "found", "not_detected", "detected", "present", "attachment_missing"
+    message: str
+
+
+class ComplianceCheckResponse(BaseModel):
+    """Compliance check result response"""
+    document_id: str
+    document_type: str
+    overall_status: str  # "compliant", "non_compliant", "warning"
+    issues: List[ComplianceIssue]
+    missing_fields: List[str]
+    missing_signatures: List[str]
+    missing_attachments: List[str]
+    check_timestamp: datetime
+

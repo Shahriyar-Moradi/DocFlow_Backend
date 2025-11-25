@@ -27,12 +27,15 @@ from models.schemas import (
     JobStatusResponse,
     ErrorResponse,
     CategoryStatsResponse,
-    CategoryStatsListResponse
+    CategoryStatsListResponse,
+    ComplianceCheckResponse,
+    ComplianceIssue
 )
 from services.firestore_service import FirestoreService
 from services.task_queue import TaskQueue
 from services.document_processor import DocumentProcessor
 from services.category_mapper import map_backend_to_ui_category, get_all_ui_categories, is_valid_ui_category
+from services.compliance_checker import ComplianceChecker
 from gcs_service import GCSVoucherService
 from services.mocks import MockFirestoreService, MockGCSVoucherService
 
@@ -746,5 +749,170 @@ async def get_category_statistics():
         
     except Exception as e:
         logger.error(f"Error getting category statistics: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/{document_id}/compliance-check", response_model=ComplianceCheckResponse)
+async def check_document_compliance(document_id: str):
+    """
+    Check compliance of a document - analyze for missing required fields, signatures, and attachments
+    """
+    try:
+        # Get document from Firestore
+        doc = get_firestore_service().get_document(document_id)
+        if not doc:
+            raise HTTPException(status_code=404, detail="Document not found")
+        
+        # Check if document is processed
+        processing_status = doc.get('processing_status', 'pending')
+        if processing_status != 'completed':
+            raise HTTPException(
+                status_code=400,
+                detail=f"Document not yet processed. Current status: {processing_status}"
+            )
+        
+        # Get document type and extracted data
+        document_type = doc.get('document_type') or doc.get('metadata', {}).get('classification') or 'Other'
+        extracted_data = doc.get('extracted_data', {})
+        
+        # Get document file path from GCS
+        gcs_path = doc.get('gcs_path') or doc.get('gcs_temp_path')
+        if not gcs_path:
+            raise HTTPException(status_code=404, detail="Document file not found in storage")
+        
+        # Extract blob name from gs:// path
+        if gcs_path.startswith('gs://'):
+            blob_name = gcs_path.split('/', 3)[3]
+        else:
+            blob_name = gcs_path
+        
+        # Download file from GCS to temporary location
+        temp_file = tempfile.NamedTemporaryFile(
+            delete=False,
+            suffix=Path(doc.get('filename', 'document')).suffix or '.pdf'
+        )
+        temp_file_path = temp_file.name
+        temp_file.close()
+        
+        try:
+            # Download from GCS
+            bucket = get_gcs_service().bucket
+            blob = bucket.blob(blob_name)
+            
+            if not blob.exists():
+                raise HTTPException(status_code=404, detail="File not found in storage")
+            
+            blob.download_to_filename(temp_file_path)
+            logger.info(f"Downloaded file from GCS for compliance check: {blob_name}")
+            
+            # Initialize compliance checker
+            compliance_checker = ComplianceChecker()
+            
+            # Run compliance check
+            compliance_result = compliance_checker.check_compliance(
+                document_id=document_id,
+                image_path=temp_file_path,
+                extracted_data=extracted_data,
+                document_type=document_type
+            )
+            
+            # Store compliance results in Firestore
+            safe_firestore_operation(
+                get_firestore_service().update_compliance_check_results,
+                document_id,
+                compliance_result
+            )
+            
+            # Convert to response model
+            issues = [
+                ComplianceIssue(
+                    field=issue.get('field', ''),
+                    status=issue.get('status', ''),
+                    message=issue.get('message', '')
+                )
+                for issue in compliance_result.get('issues', [])
+            ]
+            
+            check_timestamp = compliance_result.get('check_timestamp')
+            if isinstance(check_timestamp, str):
+                check_timestamp = datetime.fromisoformat(check_timestamp.replace('Z', '+00:00'))
+            elif not isinstance(check_timestamp, datetime):
+                check_timestamp = datetime.now()
+            
+            return ComplianceCheckResponse(
+                document_id=document_id,
+                document_type=compliance_result.get('document_type', document_type),
+                overall_status=compliance_result.get('overall_status', 'non_compliant'),
+                issues=issues,
+                missing_fields=compliance_result.get('missing_fields', []),
+                missing_signatures=compliance_result.get('missing_signatures', []),
+                missing_attachments=compliance_result.get('missing_attachments', []),
+                check_timestamp=check_timestamp
+            )
+            
+        finally:
+            # Clean up temp file
+            if os.path.exists(temp_file_path):
+                os.unlink(temp_file_path)
+                logger.info(f"Cleaned up temp file: {temp_file_path}")
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error checking document compliance: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/{document_id}/compliance", response_model=ComplianceCheckResponse)
+async def get_document_compliance(document_id: str):
+    """
+    Get stored compliance check results for a document
+    """
+    try:
+        # Get document from Firestore
+        doc = get_firestore_service().get_document(document_id)
+        if not doc:
+            raise HTTPException(status_code=404, detail="Document not found")
+        
+        # Get compliance check results
+        compliance_data = get_firestore_service().get_compliance_check_results(document_id)
+        
+        if not compliance_data:
+            raise HTTPException(
+                status_code=404,
+                detail="Compliance check not performed yet. Use POST /documents/{document_id}/compliance-check to run a check."
+            )
+        
+        # Convert to response model
+        issues = [
+            ComplianceIssue(
+                field=issue.get('field', ''),
+                status=issue.get('status', ''),
+                message=issue.get('message', '')
+            )
+            for issue in compliance_data.get('issues', [])
+        ]
+        
+        check_timestamp = compliance_data.get('check_timestamp')
+        if isinstance(check_timestamp, str):
+            check_timestamp = datetime.fromisoformat(check_timestamp.replace('Z', '+00:00'))
+        elif not isinstance(check_timestamp, datetime):
+            check_timestamp = datetime.now()
+        
+        return ComplianceCheckResponse(
+            document_id=document_id,
+            document_type=compliance_data.get('document_type', doc.get('document_type', 'Other')),
+            overall_status=compliance_data.get('overall_status', 'non_compliant'),
+            issues=issues,
+            missing_fields=compliance_data.get('missing_fields', []),
+            missing_signatures=compliance_data.get('missing_signatures', []),
+            missing_attachments=compliance_data.get('missing_attachments', []),
+            check_timestamp=check_timestamp
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting document compliance: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
