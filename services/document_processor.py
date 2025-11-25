@@ -1057,11 +1057,18 @@ Return in JSON format:
                     
                     # Handle voucher-specific extraction
                     if extraction_method == 'voucher_specific':
-                        # Extract data from JSON
-                        result['document_no'] = json_data.get('document_no', '').strip()
-                        result['document_date'] = json_data.get('document_date', '').strip()
-                        result['branch_id'] = json_data.get('branch_id', '').strip()
-                        raw_classification = json_data.get('category_type', '').strip()
+                        # Extract data from JSON (all fields optional)
+                        doc_no = json_data.get('document_no', '')
+                        result['document_no'] = doc_no.strip() if isinstance(doc_no, str) else str(doc_no) if doc_no else ''
+                        
+                        doc_date = json_data.get('document_date', '')
+                        result['document_date'] = doc_date.strip() if isinstance(doc_date, str) else str(doc_date) if doc_date else ''
+                        
+                        branch = json_data.get('branch_id', '')
+                        result['branch_id'] = branch.strip() if isinstance(branch, str) else str(branch) if branch else ''
+                        
+                        raw_classification = json_data.get('category_type', '')
+                        raw_classification = raw_classification.strip() if isinstance(raw_classification, str) else str(raw_classification) if raw_classification else ''
                         
                         # Extract classification from document_no if missing
                         if not raw_classification and result['document_no']:
@@ -1079,26 +1086,70 @@ Return in JSON format:
                             result['is_valid_voucher'] = False
                             logger.warning(f"Invalid voucher type '{raw_classification}' - will treat as attachment")
                         
-                        result['complete_filename'] = json_data.get('filename', '').strip()
+                        filename = json_data.get('filename', '')
+                        result['complete_filename'] = filename.strip() if isinstance(filename, str) else str(filename) if filename else ''
                         
-                        # Extract financial fields
-                        usd_amount = json_data.get('invoice_amount_usd', '').strip().replace(',', '') or None
-                        aed_amount = json_data.get('invoice_amount_aed', '').strip().replace(',', '') or None
-                        weight = json_data.get('gold_weight', '').strip().replace(',', '') or None
-                        purity = json_data.get('purity', '').strip() or None
+                        # Extract financial fields (all optional)
+                        try:
+                            usd_amount = json_data.get('invoice_amount_usd', '')
+                            if usd_amount:
+                                usd_str = str(usd_amount).strip().replace(',', '')
+                                result['invoice_amount_usd'] = usd_str if usd_str else None
+                            else:
+                                result['invoice_amount_usd'] = None
+                        except:
+                            result['invoice_amount_usd'] = None
                         
-                        result['invoice_amount_usd'] = usd_amount
-                        result['invoice_amount_aed'] = aed_amount
-                        result['gold_weight'] = weight
-                        result['purity'] = purity
-                        result['discount_rate'] = json_data.get('discount_rate', '').strip() or None
+                        try:
+                            aed_amount = json_data.get('invoice_amount_aed', '')
+                            if aed_amount:
+                                aed_str = str(aed_amount).strip().replace(',', '')
+                                result['invoice_amount_aed'] = aed_str if aed_str else None
+                            else:
+                                result['invoice_amount_aed'] = None
+                        except:
+                            result['invoice_amount_aed'] = None
                         
-                        logger.info(f"Extracted: Document No: {result['document_no']}, Date: {result['document_date']}, Branch: {result['branch_id']}, Category: {result['classification']}")
+                        try:
+                            weight = json_data.get('gold_weight', '')
+                            if weight:
+                                weight_str = str(weight).strip().replace(',', '')
+                                result['gold_weight'] = weight_str if weight_str else None
+                            else:
+                                result['gold_weight'] = None
+                        except:
+                            result['gold_weight'] = None
+                        
+                        try:
+                            purity = json_data.get('purity', '')
+                            result['purity'] = str(purity).strip() if purity else None
+                        except:
+                            result['purity'] = None
+                        
+                        try:
+                            discount = json_data.get('discount_rate', '')
+                            result['discount_rate'] = str(discount).strip() if discount else None
+                        except:
+                            result['discount_rate'] = None
+                        
+                        logger.info(f"Extracted: Document No: {result.get('document_no', 'N/A')}, Date: {result.get('document_date', 'N/A')}, Branch: {result.get('branch_id', 'N/A')}, Category: {result['classification']}")
                     
                     # Handle general extraction
                     else:
-                        # Extract common fields from general extraction
-                        result['document_no'] = json_data.get('document_number') or json_data.get('document_id') or json_data.get('document_no', '').strip()
+                        # Extract common fields from general extraction (all optional)
+                        result['document_no'] = (
+                            json_data.get('document_number') or 
+                            json_data.get('document_id') or 
+                            json_data.get('document_no') or 
+                            json_data.get('contract_number') or 
+                            json_data.get('agreement_number') or 
+                            json_data.get('reference_number') or
+                            ''
+                        )
+                        if isinstance(result['document_no'], str):
+                            result['document_no'] = result['document_no'].strip()
+                        else:
+                            result['document_no'] = str(result['document_no']) if result['document_no'] else ''
                         
                         # Extract date (prioritize document_date, then issue_date, then other date fields)
                         result['document_date'] = (
@@ -1107,24 +1158,36 @@ Return in JSON format:
                             json_data.get('date') or 
                             json_data.get('created_date') or
                             json_data.get('date_of_issue') or
+                            json_data.get('effective_date') or
+                            json_data.get('contract_date') or
                             ''
-                        ).strip()
+                        )
+                        if isinstance(result['document_date'], str):
+                            result['document_date'] = result['document_date'].strip()
+                        else:
+                            result['document_date'] = str(result['document_date']) if result['document_date'] else ''
                         
-                        # Extract amount and currency
-                        total_amount = json_data.get('total_amount', '')
+                        # Extract amount and currency (optional)
+                        total_amount = json_data.get('total_amount') or json_data.get('amount') or json_data.get('contract_value') or json_data.get('price') or ''
                         currency = json_data.get('currency', '')
                         if total_amount:
-                            if currency.upper() == 'USD':
-                                result['invoice_amount_usd'] = str(total_amount).replace(',', '')
-                            elif currency.upper() in ['AED', 'DHS']:
-                                result['invoice_amount_aed'] = str(total_amount).replace(',', '')
+                            # Clean amount string
+                            amount_str = str(total_amount).replace(',', '').strip()
+                            if currency and isinstance(currency, str):
+                                if currency.upper() == 'USD':
+                                    result['invoice_amount_usd'] = amount_str
+                                elif currency.upper() in ['AED', 'DHS']:
+                                    result['invoice_amount_aed'] = amount_str
+                            else:
+                                # Store in invoice_amount_aed as default if no currency specified
+                                result['invoice_amount_aed'] = amount_str
                         
                         # Set classification to document_type
                         result['classification'] = document_type
                         result['complete_filename'] = result['document_no'] or original_filename or 'document'
                         
                         # Store all extracted data
-                        logger.info(f"Extracted general document data: Type={document_type}, Doc No={result['document_no']}, Date={result['document_date']}")
+                        logger.info(f"Extracted general document data: Type={document_type}, Doc No={result.get('document_no', 'N/A')}, Date={result.get('document_date', 'N/A')}")
                     
                 else:
                     raise ValueError("No JSON found in response")
@@ -1156,13 +1219,23 @@ Return in JSON format:
                         result['complete_filename'] = result['document_no']
                         result['is_valid_voucher'] = result['classification'] in self.voucher_types
                     else:
-                        filename = os.path.basename(image_path)
-                        result['document_no'] = os.path.splitext(filename)[0]
-                        result['complete_filename'] = result['document_no']
-                        result['classification'] = 'UNKNOWN'
-                        result['success'] = False
-                        result['error'] = "Could not extract Document No from voucher"
-                        result['organized_path'] = None
+                        # No document number found via regex
+                        # For vouchers with voucher_specific extraction, this is critical
+                        if extraction_method == 'voucher_specific':
+                            filename = os.path.basename(image_path)
+                            result['document_no'] = os.path.splitext(filename)[0]
+                            result['complete_filename'] = result['document_no']
+                            result['classification'] = 'UNKNOWN'
+                            result['success'] = False
+                            result['error'] = "Could not extract Document No from voucher"
+                            result['organized_path'] = None
+                        else:
+                            # For general documents, missing document_no is acceptable
+                            logger.info(f"No document number found for general document type '{document_type}', will use fallback")
+                            result['document_no'] = ''
+                            result['classification'] = document_type
+                            result['complete_filename'] = original_filename or 'document'
+                            result['is_valid_voucher'] = False
             
             # Generate organized path
             if result['success']:
