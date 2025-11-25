@@ -603,6 +603,100 @@ async def search_documents(
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@router.get("/{document_id}/download")
+async def download_document(document_id: str):
+    """
+    Download a processed document
+    """
+    try:
+        doc = get_firestore_service().get_document(document_id)
+        if not doc:
+            raise HTTPException(status_code=404, detail="Document not found")
+        
+        gcs_path = doc.get('gcs_path')
+        if not gcs_path:
+            raise HTTPException(status_code=404, detail="Document file not found")
+        
+        # Extract blob name from gs:// path
+        if gcs_path.startswith('gs://'):
+            blob_name = gcs_path.split('/', 3)[3]
+        else:
+            blob_name = gcs_path
+        
+        # Get blob
+        blob = get_gcs_service().bucket.blob(blob_name)
+        
+        if not blob.exists():
+            raise HTTPException(status_code=404, detail="File not found in storage")
+        
+        # Generate signed URL for download
+        download_url = get_gcs_service().get_file_download_url(blob_name)
+        
+        # Return redirect to signed URL
+        from fastapi.responses import RedirectResponse
+        return RedirectResponse(url=download_url)
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error downloading document: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/{document_id}/compliance", response_model=ComplianceCheckResponse)
+async def get_document_compliance(document_id: str):
+    """
+    Get stored compliance check results for a document
+    """
+    try:
+        # Get document from Firestore
+        doc = get_firestore_service().get_document(document_id)
+        if not doc:
+            raise HTTPException(status_code=404, detail="Document not found")
+        
+        # Get compliance check results
+        compliance_data = get_firestore_service().get_compliance_check_results(document_id)
+        
+        if not compliance_data:
+            raise HTTPException(
+                status_code=404,
+                detail="Compliance check not performed yet. Use POST /documents/{document_id}/compliance-check to run a check."
+            )
+        
+        # Convert to response model
+        issues = [
+            ComplianceIssue(
+                field=issue.get('field', ''),
+                status=issue.get('status', ''),
+                message=issue.get('message', '')
+            )
+            for issue in compliance_data.get('issues', [])
+        ]
+        
+        check_timestamp = compliance_data.get('check_timestamp')
+        if isinstance(check_timestamp, str):
+            check_timestamp = datetime.fromisoformat(check_timestamp.replace('Z', '+00:00'))
+        elif not isinstance(check_timestamp, datetime):
+            check_timestamp = datetime.now()
+        
+        return ComplianceCheckResponse(
+            document_id=document_id,
+            document_type=compliance_data.get('document_type', doc.get('document_type', 'Other')),
+            overall_status=compliance_data.get('overall_status', 'non_compliant'),
+            issues=issues,
+            missing_fields=compliance_data.get('missing_fields', []),
+            missing_signatures=compliance_data.get('missing_signatures', []),
+            missing_attachments=compliance_data.get('missing_attachments', []),
+            check_timestamp=check_timestamp
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting document compliance: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @router.get("/{document_id}", response_model=DocumentResponse)
 async def get_document(document_id: str):
     """
@@ -647,46 +741,6 @@ async def get_document(document_id: str):
         raise
     except Exception as e:
         logger.error(f"Error getting document: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-@router.get("/{document_id}/download")
-async def download_document(document_id: str):
-    """
-    Download a processed document
-    """
-    try:
-        doc = get_firestore_service().get_document(document_id)
-        if not doc:
-            raise HTTPException(status_code=404, detail="Document not found")
-        
-        gcs_path = doc.get('gcs_path')
-        if not gcs_path:
-            raise HTTPException(status_code=404, detail="Document file not found")
-        
-        # Extract blob name from gs:// path
-        if gcs_path.startswith('gs://'):
-            blob_name = gcs_path.split('/', 3)[3]
-        else:
-            blob_name = gcs_path
-        
-        # Get blob
-        blob = get_gcs_service().bucket.blob(blob_name)
-        
-        if not blob.exists():
-            raise HTTPException(status_code=404, detail="File not found in storage")
-        
-        # Generate signed URL for download
-        download_url = get_gcs_service().get_file_download_url(blob_name)
-        
-        # Return redirect to signed URL
-        from fastapi.responses import RedirectResponse
-        return RedirectResponse(url=download_url)
-        
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(f"Error downloading document: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -763,12 +817,18 @@ async def check_document_compliance(document_id: str):
         if not doc:
             raise HTTPException(status_code=404, detail="Document not found")
         
-        # Check if document is processed
+        # Check if document is processed successfully
         processing_status = doc.get('processing_status', 'pending')
         if processing_status != 'completed':
+            error_detail = f"Document not yet processed. Current status: {processing_status}"
+            
+            # If document failed, include the error reason
+            if processing_status == 'failed' and doc.get('error'):
+                error_detail += f"\nReason: {doc.get('error')}"
+            
             raise HTTPException(
                 status_code=400,
-                detail=f"Document not yet processed. Current status: {processing_status}"
+                detail=error_detail
             )
         
         # Get document type and extracted data
@@ -860,59 +920,5 @@ async def check_document_compliance(document_id: str):
         raise
     except Exception as e:
         logger.error(f"Error checking document compliance: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-@router.get("/{document_id}/compliance", response_model=ComplianceCheckResponse)
-async def get_document_compliance(document_id: str):
-    """
-    Get stored compliance check results for a document
-    """
-    try:
-        # Get document from Firestore
-        doc = get_firestore_service().get_document(document_id)
-        if not doc:
-            raise HTTPException(status_code=404, detail="Document not found")
-        
-        # Get compliance check results
-        compliance_data = get_firestore_service().get_compliance_check_results(document_id)
-        
-        if not compliance_data:
-            raise HTTPException(
-                status_code=404,
-                detail="Compliance check not performed yet. Use POST /documents/{document_id}/compliance-check to run a check."
-            )
-        
-        # Convert to response model
-        issues = [
-            ComplianceIssue(
-                field=issue.get('field', ''),
-                status=issue.get('status', ''),
-                message=issue.get('message', '')
-            )
-            for issue in compliance_data.get('issues', [])
-        ]
-        
-        check_timestamp = compliance_data.get('check_timestamp')
-        if isinstance(check_timestamp, str):
-            check_timestamp = datetime.fromisoformat(check_timestamp.replace('Z', '+00:00'))
-        elif not isinstance(check_timestamp, datetime):
-            check_timestamp = datetime.now()
-        
-        return ComplianceCheckResponse(
-            document_id=document_id,
-            document_type=compliance_data.get('document_type', doc.get('document_type', 'Other')),
-            overall_status=compliance_data.get('overall_status', 'non_compliant'),
-            issues=issues,
-            missing_fields=compliance_data.get('missing_fields', []),
-            missing_signatures=compliance_data.get('missing_signatures', []),
-            missing_attachments=compliance_data.get('missing_attachments', []),
-            check_timestamp=check_timestamp
-        )
-        
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(f"Error getting document compliance: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
